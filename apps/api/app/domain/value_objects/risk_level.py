@@ -1,10 +1,9 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class RiskLevel(str, Enum):
+class RiskLevel(StrEnum):
     """
-    Represents the clinical risk level determined
-    during a postoperative follow-up.
+    Clinical risk level assigned to a postoperative follow-up.
     """
 
     LOW = "low"

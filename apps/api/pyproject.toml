@@ -1,8 +1,31 @@
+authors = [
+    { name = "Cristian Julio" }
+]
+
+readme = "README.md"
+
+license = { text = "MIT" }
+
+
 [project]
 name = "voice-agent-api"
 version = "0.1.0"
 description = "AI Voice Agent for postoperative follow-up"
 requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi",
+    "pydantic",
+    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
 
 [build-system]
 requires = ["setuptools>=69"]

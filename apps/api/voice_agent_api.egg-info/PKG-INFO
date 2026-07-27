@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: voice-agent-api
+Version: 0.1.0
+Summary: AI Voice Agent for postoperative follow-up
+Requires-Python: >=3.12
+Requires-Dist: fastapi
+Requires-Dist: pydantic
+Requires-Dist: uvicorn
