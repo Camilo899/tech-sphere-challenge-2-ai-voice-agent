@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ClinicalDecision(str, Enum):
+class ClinicalDecision(StrEnum):
     CONTINUE = "continue"
 
     ASK_MORE = "ask_more"
