@@ -1,5 +1,9 @@
 from typing import ClassVar
 
+from app.domain.value_objects.risk_level import (
+    RiskLevel,
+)
+
 
 class SymptomClassifier:
     """
@@ -23,16 +27,16 @@ class SymptomClassifier:
     def classify(
         self,
         symptoms: list[str],
-    ) -> str:
+    ) -> RiskLevel:
         normalized = {
             symptom.strip().lower()
             for symptom in symptoms
         }
 
         if normalized & self._HIGH_RISK:
-            return "high"
+            return RiskLevel.HIGH
 
         if normalized & self._MEDIUM_RISK:
-            return "medium"
+            return RiskLevel.MEDIUM
 
-        return "low"
+        return RiskLevel.LOW
