@@ -1,20 +1,25 @@
-from app.domain.entities.conversation_context import ConversationContext
-from app.domain.value_objects.conversation_state import ConversationState
+from app.domain.entities.conversation_context import (
+    ConversationContext,
+)
+from app.domain.services.conversation_flow import (
+    ConversationFlow,
+)
 
 
 class ClinicalReasoner:
     """
-    Domain service responsible for deciding the next
-    step in the follow-up conversation.
+    Coordinates the clinical conversation flow.
     """
+
+    def __init__(self) -> None:
+        self._flow = ConversationFlow()
 
     def next_step(
         self,
         context: ConversationContext,
     ) -> ConversationContext:
-        if context.current_state == ConversationState.GREETING:
-            context.current_state = (
-                ConversationState.PATIENT_VERIFICATION
-            )
+        context.current_state = self._flow.next_state(
+            context.current_state
+        )
 
         return context
