@@ -9,4 +9,4 @@ class RiskLevel(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
-    CRITICAL = "critical"
+    #CRITICAL = "critical"
