@@ -7,6 +7,9 @@ from app.domain.services.conversation_flow import (
 from app.domain.services.decision_engine import (
     DecisionEngine,
 )
+from app.domain.value_objects.conversation_message import (
+    ConversationMessage,
+)
 
 
 class ConversationOrchestrator:
@@ -22,7 +25,10 @@ class ConversationOrchestrator:
     def process(
         self,
         context: ConversationContext,
+        message: ConversationMessage,
     ) -> ConversationContext:
+        context.add_message(message)
+
         decision = self._decision_engine.decide_from_context(
             context,
         )
