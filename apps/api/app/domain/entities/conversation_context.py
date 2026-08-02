@@ -23,3 +23,12 @@ class ConversationContext:
     evidences: list[Evidence] = field(default_factory=list)
 
     messages: list[ConversationMessage] = field(default_factory=list)
+
+    def add_message(
+        self,
+        message: ConversationMessage,
+        ) -> None:
+        """
+        Adds a message to the conversation history.
+        """
+        self.messages.append(message)
