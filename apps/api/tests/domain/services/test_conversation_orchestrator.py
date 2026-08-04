@@ -1,10 +1,10 @@
 from datetime import UTC, datetime
 
+from app.application.factories.conversation_orchestrator_factory import (
+    create_conversation_orchestrator,
+)
 from app.domain.entities.conversation_context import (
     ConversationContext,
-)
-from app.domain.services.conversation_orchestrator import (
-    ConversationOrchestrator,
 )
 from app.domain.value_objects.clinical_decision import (
     ClinicalDecision,
@@ -18,8 +18,8 @@ from app.domain.value_objects.conversation_state import (
 
 
 def test_orchestrator_processes_message():
-    orchestrator = ConversationOrchestrator()
-
+    orchestrator = create_conversation_orchestrator()
+    
     context = ConversationContext(
         conversation_id="conv-001",
         current_state=ConversationState.GREETING,

@@ -1,6 +1,9 @@
 from app.domain.entities.conversation_context import (
     ConversationContext,
 )
+from app.domain.services.clinical_knowledge_service import (
+    ClinicalKnowledgeService,
+)
 from app.domain.services.conversation_flow import (
     ConversationFlow,
 )
@@ -18,9 +21,15 @@ class ConversationOrchestrator:
     and conversation progression.
     """
 
-    def __init__(self) -> None:
-        self._decision_engine = DecisionEngine()
-        self._conversation_flow = ConversationFlow()
+    def __init__(
+        self,
+        decision_engine: DecisionEngine,
+        conversation_flow: ConversationFlow,
+        knowledge_service: ClinicalKnowledgeService,
+    ) -> None:
+        self._decision_engine = decision_engine
+        self._conversation_flow = conversation_flow
+        self._knowledge_service = knowledge_service
 
     def process(
         self,
@@ -29,8 +38,16 @@ class ConversationOrchestrator:
     ) -> ConversationContext:
         context.add_message(message)
 
-        decision = self._decision_engine.decide_from_context(
-            context,
+        # Por ahora únicamente recuperamos evidencia.
+        # En el siguiente incremento la utilizaremos.
+        _ = self._knowledge_service.retrieve_evidence(
+            message.content,
+        )
+
+        decision = (
+            self._decision_engine.decide_from_context(
+                context,
+            )
         )
 
         context.clinical_decision = decision
