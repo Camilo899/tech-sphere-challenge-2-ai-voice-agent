@@ -65,6 +65,7 @@ app/domain/value_objects/recommendation.py
 app/domain/value_objects/risk_level.py
 app/domain/value_objects/symptom.py
 app/domain/value_objects/test_risk_level.py
+app/presentation/api/dependencies.py
 app/presentation/api/router.py
 app/presentation/api/routes/follow_up.py
 app/presentation/schemas/start_follow_up_request_schema.py

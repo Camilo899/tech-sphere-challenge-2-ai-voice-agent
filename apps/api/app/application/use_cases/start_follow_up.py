@@ -1,3 +1,9 @@
+from app.application.dtos.start_follow_up_request import (
+    StartFollowUpRequest,
+)
+from app.application.dtos.start_follow_up_response import (
+    StartFollowUpResponse,
+)
 from app.application.ports.conversation_repository import (
     ConversationRepository,
 )
@@ -25,14 +31,17 @@ class StartFollowUpUseCase:
 
     def execute(
         self,
-        conversation_id: str,
-    ) -> ConversationContext:
+        request: StartFollowUpRequest,
+    ) -> StartFollowUpResponse:
         context = ConversationContext(
-            conversation_id=conversation_id,
+            conversation_id=request.patient_id,
             current_state=ConversationState.GREETING,
             clinical_decision=ClinicalDecision.CONTINUE,
         )
 
         self._repository.save(context)
 
-        return context
+        return StartFollowUpResponse(
+            conversation_id=context.conversation_id,
+            current_state=context.current_state.value,
+        )
