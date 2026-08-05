@@ -14,3 +14,7 @@ def health() -> dict[str, str]:
     return {
         "status": "healthy",
     }
+
+@router.get("/error")
+def force_error() -> None:
+    raise RuntimeError("Test exception")
