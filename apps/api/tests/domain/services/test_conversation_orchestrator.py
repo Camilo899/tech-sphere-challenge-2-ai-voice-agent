@@ -16,9 +16,15 @@ from app.domain.value_objects.conversation_state import (
     ConversationState,
 )
 
+from app.application.fakes.fake_knowledge_provider import (
+    FakeKnowledgeProvider,
+)
+
 
 def test_orchestrator_processes_message():
-    orchestrator = create_conversation_orchestrator()
+    orchestrator = create_conversation_orchestrator(
+    knowledge_provider=FakeKnowledgeProvider(),
+    )
     
     context = ConversationContext(
         conversation_id="conv-001",
