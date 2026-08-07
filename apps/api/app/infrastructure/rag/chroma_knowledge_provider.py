@@ -21,6 +21,7 @@ class ChromaKnowledgeProvider(KnowledgeProvider):
         self._client = chromadb.PersistentClient(path=path)
         self._collection = self._client.get_or_create_collection(
             name=collection_name,
+            metadata={"hnsw:space": "cosine"},
         )
 
     def index(

@@ -7,4 +7,3 @@ class EmbeddingProvider(Protocol):
 
     def __call__(self, text: str) -> Sequence[float]:
         """Return the embedding vector for the given text."""
-        ...
