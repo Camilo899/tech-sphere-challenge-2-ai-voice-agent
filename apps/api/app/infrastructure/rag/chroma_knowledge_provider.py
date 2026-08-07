@@ -1,12 +1,10 @@
-from collections.abc import Callable, Sequence
 from typing import Any, cast
 
 import chromadb
 
 from app.domain.ports.knowledge_provider import KnowledgeProvider
 from app.domain.value_objects.evidence import Evidence
-
-type EmbeddingProvider = Callable[[str], Sequence[float]]
+from app.infrastructure.rag.embedding import EmbeddingProvider
 
 
 class ChromaKnowledgeProvider(KnowledgeProvider):
