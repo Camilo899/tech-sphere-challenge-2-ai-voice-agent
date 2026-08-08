@@ -19,3 +19,9 @@ class ConversationRepository(Protocol):
         Persists a conversation context.
         """
         ...
+        
+    def get(
+    self,
+    conversation_id: str,
+    ) -> ConversationContext:
+        ...
