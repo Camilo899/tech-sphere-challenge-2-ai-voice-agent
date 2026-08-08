@@ -3,6 +3,9 @@ from datetime import UTC, datetime
 from app.application.factories.conversation_orchestrator_factory import (
     create_conversation_orchestrator,
 )
+from app.application.fakes.fake_knowledge_provider import (
+    FakeKnowledgeProvider,
+)
 from app.domain.entities.conversation_context import (
     ConversationContext,
 )
@@ -14,10 +17,6 @@ from app.domain.value_objects.conversation_message import (
 )
 from app.domain.value_objects.conversation_state import (
     ConversationState,
-)
-
-from app.application.fakes.fake_knowledge_provider import (
-    FakeKnowledgeProvider,
 )
 
 
