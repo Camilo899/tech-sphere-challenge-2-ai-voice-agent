@@ -19,7 +19,6 @@ from app.presentation.schemas.send_message_response_schema import (
     SendMessageResponseSchema,
 )
 
-
 router = APIRouter(
     prefix="/messages",
     tags=["Messages"],

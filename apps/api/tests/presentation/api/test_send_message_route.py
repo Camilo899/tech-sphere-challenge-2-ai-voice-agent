@@ -1,13 +1,13 @@
 from fastapi.testclient import TestClient
 
-from app.application.fakes.fake_language_model import (
-    FakeLanguageModel,
+from app.application.factories.conversation_orchestrator_factory import (
+    create_conversation_orchestrator,
 )
 from app.application.fakes.fake_conversation_repository import (
     FakeConversationRepository,
 )
-from app.application.factories.conversation_orchestrator_factory import (
-    create_conversation_orchestrator,
+from app.application.fakes.fake_language_model import (
+    FakeLanguageModel,
 )
 from app.application.use_cases.send_message import (
     SendMessageUseCase,

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from app.domain.value_objects.llm_response import LLMResponse
 
 

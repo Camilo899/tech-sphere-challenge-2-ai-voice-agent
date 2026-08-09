@@ -1,12 +1,12 @@
 from datetime import UTC, datetime
 
-from app.application.fakes.fake_language_model import FakeLanguageModel
 from app.application.factories.conversation_orchestrator_factory import (
     create_conversation_orchestrator,
 )
 from app.application.fakes.fake_knowledge_provider import (
     FakeKnowledgeProvider,
 )
+from app.application.fakes.fake_language_model import FakeLanguageModel
 from app.domain.entities.conversation_context import ConversationContext
 from app.domain.value_objects.clinical_decision import ClinicalDecision
 from app.domain.value_objects.conversation_message import ConversationMessage

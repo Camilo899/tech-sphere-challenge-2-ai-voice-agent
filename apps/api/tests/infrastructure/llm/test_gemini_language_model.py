@@ -12,9 +12,8 @@ def test_gemini_language_model_requires_api_key() -> None:
         "os.environ",
         {},
         clear=True,
-    ):
-        with pytest.raises(ValueError, match="GEMINI_API_KEY"):
-            GeminiLanguageModel()
+    ), pytest.raises(ValueError, match="GEMINI_API_KEY"):
+        GeminiLanguageModel()
 
 
 def test_gemini_language_model_generates_response() -> None:

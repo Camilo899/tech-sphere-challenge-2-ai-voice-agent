@@ -1,15 +1,14 @@
-from app.application.fakes.fake_conversation_repository import (
-    FakeConversationRepository,
-)
 from app.application.factories.conversation_orchestrator_factory import (
     create_conversation_orchestrator,
+)
+from app.application.fakes.fake_conversation_repository import (
+    FakeConversationRepository,
 )
 from app.application.use_cases.send_message import SendMessageUseCase
 from app.application.use_cases.start_follow_up import StartFollowUpUseCase
 from app.infrastructure.llm.gemini_language_model import (
     GeminiLanguageModel,
 )
-
 
 _repository = FakeConversationRepository()
 

@@ -1,7 +1,7 @@
 from app.domain.ports.language_model import LanguageModel
+from app.domain.services.clinical_prompt_builder import ClinicalPromptBuilder
 from app.domain.value_objects.evidence import Evidence
 from app.domain.value_objects.llm_response import LLMResponse
-from app.domain.services.clinical_prompt_builder import ClinicalPromptBuilder
 
 
 class ClinicalResponseService:
