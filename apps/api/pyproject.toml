@@ -14,7 +14,9 @@ description = "AI Voice Agent for postoperative follow-up"
 requires-python = ">=3.12"
 
 dependencies = [
+    "chromadb>=1.5.9",
     "fastapi",
+    "google-genai>=2.17.0",
     "httpx2>=2.9.1",
     "pydantic",
     "sentence-transformers>=5.7.0",
@@ -32,6 +34,9 @@ dev = [
 [build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
 
 [tool.black]
 line-length = 88

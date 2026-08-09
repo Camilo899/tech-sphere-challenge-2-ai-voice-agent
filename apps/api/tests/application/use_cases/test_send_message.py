@@ -1,41 +1,32 @@
-from app.application.dtos.send_message_request import (
-SendMessageRequest,
-)
+from app.application.dtos.send_message_request import SendMessageRequest
 from app.application.fakes.fake_conversation_repository import (
-FakeConversationRepository,
+    FakeConversationRepository,
 )
 from app.application.fakes.fake_knowledge_provider import (
-FakeKnowledgeProvider,
+    FakeKnowledgeProvider,
 )
-from app.application.use_cases.send_message import (
-SendMessageUseCase,
-)
-from app.domain.entities.conversation_context import (
-ConversationContext,
-)
+from app.application.fakes.fake_language_model import FakeLanguageModel
+from app.application.use_cases.send_message import SendMessageUseCase
+from app.domain.entities.conversation_context import ConversationContext
 from app.domain.services.clinical_knowledge_service import (
-ClinicalKnowledgeService,
+    ClinicalKnowledgeService,
 )
-from app.domain.services.conversation_flow import (
-ConversationFlow,
+from app.domain.services.clinical_prompt_builder import ClinicalPromptBuilder
+from app.domain.services.clinical_response_service import (
+    ClinicalResponseService,
 )
+from app.domain.services.conversation_flow import ConversationFlow
 from app.domain.services.conversation_orchestrator import (
-ConversationOrchestrator,
+    ConversationOrchestrator,
 )
-from app.domain.services.decision_engine import (
-DecisionEngine,
-)
-from app.domain.value_objects.clinical_decision import (
-ClinicalDecision,
-)
-from app.domain.value_objects.conversation_state import (
-ConversationState,
-)
+from app.domain.services.decision_engine import DecisionEngine
+from app.domain.value_objects.clinical_decision import ClinicalDecision
+from app.domain.value_objects.conversation_state import ConversationState
+
 
 def test_send_message_processes_existing_conversation() -> None:
     repository = FakeConversationRepository()
 
-    
     context = ConversationContext(
         conversation_id="conv-001",
         current_state=ConversationState.GREETING,
@@ -48,10 +39,18 @@ def test_send_message_processes_existing_conversation() -> None:
         FakeKnowledgeProvider(),
     )
 
+    language_model = FakeLanguageModel()
+
+    clinical_response_service = ClinicalResponseService(
+        prompt_builder=ClinicalPromptBuilder(),
+        language_model=language_model,
+    )
+
     orchestrator = ConversationOrchestrator(
         decision_engine=DecisionEngine(),
         conversation_flow=ConversationFlow(),
         knowledge_service=knowledge_service,
+        clinical_response_service=clinical_response_service,
     )
 
     use_case = SendMessageUseCase(
@@ -66,6 +65,8 @@ def test_send_message_processes_existing_conversation() -> None:
 
     response = use_case.execute(request)
 
+    assert response.response == "Respuesta clínica simulada."
+
     assert response.current_state == (
         ConversationState.PATIENT_VERIFICATION.value
     )
@@ -76,7 +77,7 @@ def test_send_message_processes_existing_conversation() -> None:
 
     assert updated_context.conversation_id == "conv-001"
 
-    assert len(updated_context.messages) == 1
+    assert len(updated_context.messages) == 2
 
     assert updated_context.messages[0].speaker == "patient"
 
@@ -85,3 +86,9 @@ def test_send_message_processes_existing_conversation() -> None:
         == "Tengo fiebre desde ayer."
     )
 
+    assert updated_context.messages[1].speaker == "assistant"
+
+    assert (
+        updated_context.messages[1].content
+        == "Respuesta clínica simulada."
+    )

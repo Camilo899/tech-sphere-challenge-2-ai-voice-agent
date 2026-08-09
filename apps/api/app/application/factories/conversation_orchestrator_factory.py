@@ -1,8 +1,15 @@
 from app.domain.ports.knowledge_provider import (
     KnowledgeProvider,
 )
+from app.domain.ports.language_model import LanguageModel
 from app.domain.services.clinical_knowledge_service import (
     ClinicalKnowledgeService,
+)
+from app.domain.services.clinical_prompt_builder import (
+    ClinicalPromptBuilder,
+)
+from app.domain.services.clinical_response_service import (
+    ClinicalResponseService,
 )
 from app.domain.services.conversation_flow import (
     ConversationFlow,
@@ -20,9 +27,10 @@ from app.infrastructure.rag.factory import (
 
 def create_conversation_orchestrator(
     knowledge_provider: KnowledgeProvider | None = None,
+    language_model: LanguageModel | None = None,
 ) -> ConversationOrchestrator:
     """
-    Creates a fully configured ConversationOrchestrator.
+    Creates a configured ConversationOrchestrator.
     """
     provider = (
         knowledge_provider
@@ -34,8 +42,17 @@ def create_conversation_orchestrator(
         provider,
     )
 
+    clinical_response_service = None
+
+    if language_model is not None:
+        clinical_response_service = ClinicalResponseService(
+            prompt_builder=ClinicalPromptBuilder(),
+            language_model=language_model,
+        )
+
     return ConversationOrchestrator(
         decision_engine=DecisionEngine(),
         conversation_flow=ConversationFlow(),
         knowledge_service=knowledge_service,
+        clinical_response_service=clinical_response_service,
     )

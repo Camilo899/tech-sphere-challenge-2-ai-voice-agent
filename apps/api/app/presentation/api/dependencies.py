@@ -1,26 +1,13 @@
 from app.application.fakes.fake_conversation_repository import (
     FakeConversationRepository,
 )
-from app.application.use_cases.send_message import (
-    SendMessageUseCase,
+from app.application.factories.conversation_orchestrator_factory import (
+    create_conversation_orchestrator,
 )
-from app.application.use_cases.start_follow_up import (
-    StartFollowUpUseCase,
-)
-from app.domain.services.clinical_knowledge_service import (
-    ClinicalKnowledgeService,
-)
-from app.domain.services.conversation_flow import (
-    ConversationFlow,
-)
-from app.domain.services.conversation_orchestrator import (
-    ConversationOrchestrator,
-)
-from app.domain.services.decision_engine import (
-    DecisionEngine,
-)
-from app.application.fakes.fake_knowledge_provider import (
-    FakeKnowledgeProvider,
+from app.application.use_cases.send_message import SendMessageUseCase
+from app.application.use_cases.start_follow_up import StartFollowUpUseCase
+from app.infrastructure.llm.gemini_language_model import (
+    GeminiLanguageModel,
 )
 
 
@@ -37,17 +24,13 @@ def get_start_follow_up_use_case() -> StartFollowUpUseCase:
 
 def get_send_message_use_case() -> SendMessageUseCase:
     """
-    Creates the SendMessageUseCase with shared
-    conversation dependencies.
+    Creates the SendMessageUseCase with the configured
+    production LLM.
     """
-    knowledge_service = ClinicalKnowledgeService(
-        FakeKnowledgeProvider(),
-    )
+    language_model = GeminiLanguageModel()
 
-    orchestrator = ConversationOrchestrator(
-        decision_engine=DecisionEngine(),
-        conversation_flow=ConversationFlow(),
-        knowledge_service=knowledge_service,
+    orchestrator = create_conversation_orchestrator(
+        language_model=language_model,
     )
 
     return SendMessageUseCase(

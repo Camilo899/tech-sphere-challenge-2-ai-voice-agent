@@ -1,30 +1,26 @@
 from datetime import UTC, datetime
 
+from app.application.fakes.fake_language_model import FakeLanguageModel
 from app.application.factories.conversation_orchestrator_factory import (
     create_conversation_orchestrator,
 )
 from app.application.fakes.fake_knowledge_provider import (
     FakeKnowledgeProvider,
 )
-from app.domain.entities.conversation_context import (
-    ConversationContext,
-)
-from app.domain.value_objects.clinical_decision import (
-    ClinicalDecision,
-)
-from app.domain.value_objects.conversation_message import (
-    ConversationMessage,
-)
-from app.domain.value_objects.conversation_state import (
-    ConversationState,
-)
+from app.domain.entities.conversation_context import ConversationContext
+from app.domain.value_objects.clinical_decision import ClinicalDecision
+from app.domain.value_objects.conversation_message import ConversationMessage
+from app.domain.value_objects.conversation_state import ConversationState
 
 
-def test_orchestrator_processes_message():
+def test_orchestrator_processes_message() -> None:
+    language_model = FakeLanguageModel()
+
     orchestrator = create_conversation_orchestrator(
-    knowledge_provider=FakeKnowledgeProvider(),
+        knowledge_provider=FakeKnowledgeProvider(),
+        language_model=language_model,
     )
-    
+
     context = ConversationContext(
         conversation_id="conv-001",
         current_state=ConversationState.GREETING,
@@ -44,9 +40,16 @@ def test_orchestrator_processes_message():
         message=message,
     )
 
-    assert len(updated.messages) == 1
+    assert len(updated.messages) == 2
 
     assert updated.messages[0] is message
+
+    assert updated.messages[1].speaker == "assistant"
+
+    assert (
+        updated.messages[1].content
+        == "Respuesta clínica simulada."
+    )
 
     assert (
         updated.clinical_decision
@@ -57,3 +60,11 @@ def test_orchestrator_processes_message():
         updated.current_state
         is ConversationState.PATIENT_VERIFICATION
     )
+
+    assert len(updated.evidences) == 1
+
+    assert updated.evidences[0].chunk_id == "chunk-001"
+
+    assert language_model.last_prompt is not None
+
+    assert "Tengo fiebre desde ayer." in language_model.last_prompt

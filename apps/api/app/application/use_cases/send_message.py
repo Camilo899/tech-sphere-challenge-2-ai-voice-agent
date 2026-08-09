@@ -1,20 +1,12 @@
 from datetime import UTC, datetime
 
-from app.application.dtos.send_message_request import (
-    SendMessageRequest,
-)
-from app.application.dtos.send_message_response import (
-    SendMessageResponse,
-)
-from app.application.ports.conversation_repository import (
-    ConversationRepository,
-)
+from app.application.dtos.send_message_request import SendMessageRequest
+from app.application.dtos.send_message_response import SendMessageResponse
+from app.application.ports.conversation_repository import ConversationRepository
 from app.domain.services.conversation_orchestrator import (
     ConversationOrchestrator,
 )
-from app.domain.value_objects.conversation_message import (
-    ConversationMessage,
-)
+from app.domain.value_objects.conversation_message import ConversationMessage
 
 
 class SendMessageUseCase:
@@ -52,7 +44,16 @@ class SendMessageUseCase:
 
         self._repository.save(updated_context)
 
+        assistant_response = ""
+
+        for conversation_message in reversed(
+            updated_context.messages,
+        ):
+            if conversation_message.speaker == "assistant":
+                assistant_response = conversation_message.content
+                break
+
         return SendMessageResponse(
-            response="",
+            response=assistant_response,
             current_state=updated_context.current_state.value,
         )
