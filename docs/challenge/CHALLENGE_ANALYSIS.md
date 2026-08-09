@@ -34,7 +34,7 @@ nuestra implementación.
 |---|---|---|---|---|---|
 | **G1** | 4 entregables completos | Repositorio público + documentación propia en construcción. Diagrama, informe y video aún pendientes. | Checklist final de los 4 entregables | GitHub + diagrama + informe + video | 🟡 |
 | **G2** | Levantamiento ≤15 min | Proyecto Python/FastAPI con `pyproject.toml` y `uv.lock`; procedimiento final todavía no cerrado. | Levantamiento cronometrado siguiendo exclusivamente README | README + logs + tiempo medido | 🟡 |
-| **G3** | Modelo permitido | Los puertos para integración existen, pero todavía no hay modelo LLM real seleccionado e integrado. | Verificar modelo contra `docs/stack-tecnico.md` | Configuración + código + README + informe | 🔴 |
+| **G3** | Modelo permitido | Google Gemini 1.5 Flash integrado mediante `google-genai`, con adaptador `GeminiLanguageModel` y configuración mediante `GEMINI_API_KEY`. | Verificar modelo contra `docs/stack-tecnico.md` y ejecutar flujo de respuesta | Código + configuración + pruebas + README + informe | 🟢 |
 | **G4** | Voz en tiempo real | Existe `VoiceProvider` como puerto arquitectónico, pero no hay pipeline STT → LLM → TTS funcional. | Saludo + pregunta trivial en llamada real | Demo + logs + video | 🔴 |
 | **G5** | Knowledge vivo | Existe `KnowledgeProvider` y `FakeKnowledgeProvider`, pero no existe aún upload → indexación → consulta → delete real. | Documento externo: subir → consultar → eliminar → comprobar olvido | Consola + logs + video | 🔴 |
 
@@ -98,11 +98,13 @@ Existen contratos para:
 - `LanguageNormalizer`
 - `SummaryProvider`
 - `VoiceProvider`
+- `LanguageModel`
 
 También existen fakes para pruebas, incluyendo:
 
 - `FakeConversationRepository`
 - `FakeKnowledgeProvider`
+- `FakeLanguageModel`
 
 ### Estado
 
@@ -165,31 +167,57 @@ conocimiento, pero todavía falta construir:
 
 ## 3.5 LLM
 
-Todavía no se ha seleccionado ni integrado un modelo de la lista cerrada de
-`docs/stack-tecnico.md`.
+Se seleccionó e integró **Google Gemini 1.5 Flash**, uno de los modelos
+permitidos por `docs/stack-tecnico.md`.
 
-Modelos permitidos:
+La integración se realiza mediante:
 
-- Google Gemini 1.5 Flash;
-- Llama 3.1 70B vía Groq;
-- Llama 3.2 1B o 3B local;
-- Phi-3.5 Mini 3.8B local.
+- puerto de dominio `LanguageModel`;
+- adaptador `GeminiLanguageModel`;
+- SDK oficial `google-genai`;
+- configuración mediante `GEMINI_API_KEY`;
+- `ClinicalPromptBuilder`;
+- `ClinicalResponseService`;
+- integración con `ConversationOrchestrator`;
+- endpoint `/messages`.
+
+El dominio permanece desacoplado del proveedor concreto mediante el puerto
+`LanguageModel`.
+
+### Validación
+
+La implementación cuenta con pruebas para:
+
+- contrato del `LanguageModel`;
+- `FakeLanguageModel`;
+- `ClinicalResponseService`;
+- `GeminiLanguageModel`;
+- caso de uso `SendMessageUseCase`;
+- endpoint `/messages`.
+
+La suite completa fue ejecutada con:
+
+`uv run python -m pytest -q`
+
+Resultado:
+
+`60 passed`
 
 ### Estado
 
-🔴 **Pendiente de selección e integración.**
+🟢 **LLM real integrado y probado.**
 
-La selección debe considerar simultáneamente:
+### Pendiente
 
-- calidad de razonamiento;
-- latencia;
-- costo;
-- facilidad de reproducción;
-- compatibilidad con voz;
-- capacidad de seguir políticas clínicas;
-- comportamiento ante prompt injection.
+Todavía falta instrumentar:
 
-La decisión final debe quedar documentada en el informe.
+- tokens de entrada por turno;
+- tokens de salida por turno;
+- invocaciones LLM por turno;
+- costo estimado por llamada;
+- pruebas adversariales de prompt injection.
+
+La validación clínica integral también permanece pendiente.
 
 ---
 
@@ -507,8 +535,8 @@ No se priorizan funcionalidades puramente estéticas.
 ### Orden de prioridad actual
 
 1. **Cerrar trazabilidad de requisitos.**
-2. **Seleccionar modelo permitido.**
-3. **Implementar RAG real.**
+2. **Implementar RAG real.**
+3. **Implementar knowledge vivo.**
 4. **Implementar knowledge vivo.**
 5. **Conectar decisión clínica con evidencia real.**
 6. **Implementar STT/LLM/TTS.**
@@ -527,13 +555,14 @@ No se priorizan funcionalidades puramente estéticas.
 
 - G1 🟡
 - G2 🟡
-- G3 🔴
+- G3 🟢
 - G4 🔴
 - G5 🔴
 
 ## Núcleo de puntuación
 
-- RAG ⬜ 🔴
+- RAG 🔴
+- LLM 🟢
 - Decisión clínica 🟡
 - Conversación 🟡
 - Voz 🔴
@@ -554,14 +583,35 @@ No se priorizan funcionalidades puramente estéticas.
 
 1. Modelo permitido seleccionado: 🟢 **Google Gemini 1.5 Flash**
 2. Justificación técnica de la elección: 🟢 **Documentada en PROJECT_JOURNAL.md**
-3. Proveedor y mecanismo de inferencia: 🟢 **API oficial de Google AI Studio**
+3. Proveedor y mecanismo de inferencia: 🟢 **API oficial de Google AI Studio mediante `google-genai`**
 4. Estrategia de embeddings: 🟢 **text-embedding-004**
 5. Almacenamiento vectorial: 🟢 **ChromaDB (Embebido / Local)**
 6. Estrategia de chunking: 🟢 **300-500 tokens con 50 de overlap basado en estructuras clínicas**
 7. Contrato de recuperación: 🟢 **Vinculado a KnowledgeProvider**
-8. Formato de evidencia: 🟢 **Estructura ClinicalEvidence con ID de documento y fuente**
-9. Estrategia de actualización y eliminación: 🟢 **Operaciones atómicas basadas en IDs mediante ChromaDB**
-10. Puntos de instrumentación para métricas: 🟢 **Interceptores/Decoradores a nivel de caso de uso (Tokens e Invocaciones)**
+8. Formato de evidencia: 🟢 **Estructura de evidencia con ID de documento y fuente**
+9. Estrategia de actualización y eliminación: 🟢 **Definida para la infraestructura RAG**
+10. Puntos de instrumentación para métricas: 🟢 **Definidos para tokens e invocaciones**
 
-**Estado del Incremento:** 🟢 **DISEÑO COMPLETADO**. Listo para el paso de implementación de infraestructura.
+**Estado del diseño:** 🟢 **COMPLETADO**
+
+### INC-002 — Integración del LLM Gemini
+
+1. Modelo implementado: 🟢 **Google Gemini 1.5 Flash**
+2. Adaptador de infraestructura: 🟢 **`GeminiLanguageModel`**
+3. Puerto desacoplado: 🟢 **`LanguageModel`**
+4. Servicio de respuesta clínica: 🟢 **`ClinicalResponseService`**
+5. Constructor de prompts: 🟢 **`ClinicalPromptBuilder`**
+6. Integración con orquestador: 🟢 **`ConversationOrchestrator`**
+7. Endpoint de mensajes: 🟢 **`POST /messages`**
+8. Fake para pruebas: 🟢 **`FakeLanguageModel`**
+9. Suite automatizada: 🟢 **60 tests pasando**
+
+**Estado del incremento:** 🟢 **IMPLEMENTADO Y VALIDADO**
+
+### Pendiente para los siguientes incrementos
+
+- RAG real completo.
+- Knowledge vivo.
+- Instrumentación de tokens, invocaciones y costos.
+- Voz en tiempo real.
 

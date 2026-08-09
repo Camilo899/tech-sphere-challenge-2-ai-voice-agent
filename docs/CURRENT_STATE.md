@@ -145,6 +145,10 @@ Componentes implementados incluyen:
 - Puertos.
 - Servicios de conocimiento clínico.
 - Orquestador de conversación.
+- `LanguageModel`.
+- `GeminiLanguageModel`.
+- `ClinicalPromptBuilder`.
+- `ClinicalResponseService`.
 - Application DTOs.
 - Use Cases.
 - Composition Root.
@@ -201,14 +205,32 @@ La solución debe poder levantarse siguiendo exclusivamente el README.
 
 ### G3 — Modelo permitido
 
-El modelo de razonamiento debe ser estrictamente uno de:
+🟢 **IMPLEMENTADO**
 
-- Google Gemini 1.5 Flash.
-- Llama 3.1 70B vía Groq.
-- Llama 3.2 1B/3B local.
-- Phi-3.5 Mini 3.8B local.
+El modelo seleccionado es:
 
-La elección debe quedar declarada y justificada en el informe final.
+**Google Gemini 1.5 Flash**
+
+La integración se realiza mediante:
+
+- SDK `google-genai`;
+- puerto `LanguageModel`;
+- adaptador `GeminiLanguageModel`;
+- variable de entorno `GEMINI_API_KEY`;
+- `ClinicalResponseService`;
+- `ClinicalPromptBuilder`;
+- integración con `ConversationOrchestrator`.
+
+La suite automatizada actual reporta:
+
+`60 passed`
+
+La elección y justificación técnica están registradas en
+`docs/PROJECT_JOURNAL.md`.
+
+G3 se considera implementado a nivel técnico. La evidencia final de entrega
+todavía deberá incluir configuración, código, README, informe y demostración.
+
 
 ### G4 — Voz en tiempo real
 
@@ -303,10 +325,18 @@ La estética de las superficies no es criterio de puntuación.
 
 ## 13. Próximo objetivo
 
-Construir el núcleo funcional mínimo que permita avanzar de forma verificable hacia:
+Cerrar el circuito RAG real y knowledge vivo sobre la integración LLM existente:
 
-`Conversación → RAG → decisión clínica → escalamiento → resumen → observabilidad`
+`Documento → ingestión → chunking → embeddings → ChromaDB → recuperación → evidencia → Gemini → respuesta`
 
-La voz, consola de conocimiento vivo y observabilidad deben integrarse progresivamente sobre esta base.
+Después se integrarán progresivamente:
+
+`Voz → STT → RAG/LLM → TTS`
+
+junto con observabilidad, métricas obligatorias y consola de administración.
+
+El siguiente incremento técnico prioritario es la implementación real de RAG
+y las operaciones de knowledge vivo.
+
 
 Cada incremento será validado antes de iniciar el siguiente.

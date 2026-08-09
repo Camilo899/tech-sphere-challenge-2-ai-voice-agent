@@ -191,3 +191,134 @@ Gemini 1.5 Flash asegura latencias ultra bajas requeridas para que la conversaci
 
 ### Evidencia
 Este diseño técnico queda plasmado como el punto de partida para las implementaciones de los adaptadores en `infrastructure/`.
+---
+
+## 2026-08-09 — INC-001: Implementación y validación de LLM + RAG
+
+### Contexto
+
+La decisión registrada en INC-001 pasó de diseño arquitectónico a implementación
+funcional dentro del flujo de conversación.
+
+El objetivo fue cerrar el circuito:
+
+`mensaje del paciente → recuperación de evidencia → construcción de prompt → LLM → respuesta → conversación`
+
+sin introducir lógica de infraestructura dentro del dominio clínico.
+
+### Implementación
+
+Se implementó el adaptador:
+
+`app/infrastructure/llm/gemini_language_model.py`
+
+El adaptador utiliza el SDK oficial `google-genai` y expone el contrato definido por:
+
+`app.domain.ports.language_model.LanguageModel`
+
+La configuración de la API se realiza mediante:
+
+`GEMINI_API_KEY`
+
+El modelo seleccionado es:
+
+`gemini-1.5-flash`
+
+### Integración con RAG
+
+La recuperación de conocimiento permanece encapsulada mediante:
+
+`KnowledgeProvider → ClinicalKnowledgeService`
+
+La evidencia recuperada se entrega al:
+
+`ClinicalPromptBuilder`
+
+que construye el prompt clínico incluyendo el mensaje del paciente y los fragmentos
+recuperados.
+
+Posteriormente:
+
+`ClinicalResponseService`
+
+coordina:
+
+`KnowledgeService → PromptBuilder → LanguageModel`
+
+y devuelve un `LLMResponse`.
+
+### Integración con la conversación
+
+`ConversationOrchestrator` fue ampliado para utilizar `ClinicalResponseService`.
+
+El flujo resultante es:
+
+1. Se registra el mensaje del paciente.
+2. Se recupera evidencia clínica.
+3. Se genera la respuesta mediante el servicio clínico.
+4. La respuesta del LLM se registra como mensaje del asistente.
+5. Se conserva la evidencia recuperada en el contexto.
+6. Se ejecuta la decisión clínica.
+7. Se actualiza el estado de la conversación.
+
+La integración mantiene la separación entre dominio, aplicación e infraestructura.
+
+### Pruebas
+
+Se incorporaron pruebas para:
+
+- contrato `LanguageModel`;
+- fake del modelo de lenguaje;
+- adaptador `GeminiLanguageModel`;
+- `ClinicalPromptBuilder`;
+- `ClinicalResponseService`;
+- `ConversationOrchestrator`;
+- `SendMessageUseCase`;
+- endpoint `/messages`.
+
+La validación completa de la aplicación quedó en:
+
+`60 passed`
+
+### Validación
+
+Comando utilizado:
+
+`uv run python -m pytest -q`
+
+Resultado:
+
+`60 passed`
+
+También fueron validadas individualmente las piezas críticas del circuito:
+
+- `ClinicalResponseService`: 1 passed
+- `SendMessageUseCase`: 1 passed
+- endpoint `/messages`: 1 passed
+
+### Evidencia
+
+La implementación quedó integrada en el commit técnico correspondiente a INC-001.
+
+Los principales artefactos implementados o modificados son:
+
+- `app/infrastructure/llm/gemini_language_model.py`
+- `app/domain/services/clinical_response_service.py`
+- `app/domain/services/conversation_orchestrator.py`
+- `app/application/factories/conversation_orchestrator_factory.py`
+- `app/application/use_cases/send_message.py`
+- `app/presentation/api/dependencies.py`
+- pruebas del adaptador, servicio, caso de uso y endpoint
+- `pyproject.toml`
+- `uv.lock`
+
+### Estado
+
+INC-001 queda implementado y validado.
+
+La integración real del LLM está funcional bajo configuración mediante
+`GEMINI_API_KEY`, mientras que la recuperación RAG continúa utilizando la
+abstracción `KnowledgeProvider` y su implementación basada en ChromaDB.
+
+El siguiente objetivo es continuar con el cierre del circuito operativo y las
+compuertas restantes, especialmente Knowledge Vivo y el pipeline de voz.
