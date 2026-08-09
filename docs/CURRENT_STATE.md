@@ -159,6 +159,14 @@ Componentes implementados incluyen:
 - Global exception handler.
 - Send message DTOs.
 - API schemas.
+- `BGEEmbeddingProvider`.
+- `ChromaKnowledgeProvider`.
+- Factory de infraestructura RAG.
+- Indexación de chunks clínicos.
+- Recuperación de evidencia mediante búsqueda vectorial.
+- Integración de evidencia en `ConversationOrchestrator`.
+- Grounding del prompt clínico mediante `ClinicalPromptBuilder`.
+- Integración BGE-M3 → ChromaDB validada mediante pruebas.
 
 Existe `StartFollowUpUseCase`, responsable de:
 
@@ -325,9 +333,13 @@ La estética de las superficies no es criterio de puntuación.
 
 ## 13. Próximo objetivo
 
-Cerrar el circuito RAG real y knowledge vivo sobre la integración LLM existente:
+El circuito RAG real y el grounding del LLM ya están implementados:
 
-`Documento → ingestión → chunking → embeddings → ChromaDB → recuperación → evidencia → Gemini → respuesta`
+`Consulta → embeddings BGE-M3 → ChromaDB → Evidence → ClinicalPromptBuilder → Gemini`
+
+El siguiente objetivo técnico es implementar Knowledge Vivo sobre esta infraestructura:
+
+`Documento → ingestión → extracción → chunking → embeddings → ChromaDB → consulta → eliminación → verificación de olvido`
 
 Después se integrarán progresivamente:
 
@@ -335,8 +347,6 @@ Después se integrarán progresivamente:
 
 junto con observabilidad, métricas obligatorias y consola de administración.
 
-El siguiente incremento técnico prioritario es la implementación real de RAG
-y las operaciones de knowledge vivo.
-
+El siguiente incremento técnico prioritario es **INC-004 — Knowledge Vivo**.
 
 Cada incremento será validado antes de iniciar el siguiente.

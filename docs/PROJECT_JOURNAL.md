@@ -322,3 +322,88 @@ abstracción `KnowledgeProvider` y su implementación basada en ChromaDB.
 
 El siguiente objetivo es continuar con el cierre del circuito operativo y las
 compuertas restantes, especialmente Knowledge Vivo y el pipeline de voz.
+
+---
+
+## 2026-08-09 — INC-003: Infraestructura RAG con BGE-M3 y ChromaDB
+
+### Contexto
+
+El proyecto requiere recuperación de conocimiento clínico fundamentado para
+reducir alucinaciones y permitir trazabilidad de la evidencia utilizada por
+el agente.
+
+La arquitectura ya contaba con el puerto `KnowledgeProvider`, por lo que la
+implementación se realizó mediante adaptadores de infraestructura sin alterar
+el dominio.
+
+### Alternativas
+
+Se evaluó mantener únicamente el `FakeKnowledgeProvider` para las pruebas o
+implementar una infraestructura RAG real.
+
+Se eligió implementar el stack RAG real con embeddings locales y almacenamiento
+vectorial persistente.
+
+### Decisión
+
+Se implementó:
+
+- `BGEEmbeddingProvider` utilizando `BAAI/bge-m3`;
+- `ChromaKnowledgeProvider` utilizando ChromaDB persistente;
+- embeddings normalizados;
+- indexación de chunks mediante `index(...)`;
+- recuperación mediante `retrieve(...)`;
+- transformación de resultados en `Evidence`;
+- factory `create_chroma_knowledge_provider()`;
+- pruebas unitarias y de integración.
+
+El flujo validado es:
+
+`texto → BGE-M3 → embedding → ChromaDB → búsqueda → Evidence`
+
+### Razón
+
+La solución permite disponer de recuperación vectorial local sin acoplar el
+dominio a ChromaDB ni al modelo concreto de embeddings.
+
+Esto mantiene la arquitectura hexagonal y permite sustituir posteriormente
+los adaptadores sin modificar los contratos del dominio.
+
+### Riesgos reducidos
+
+- Dependencia de conocimiento exclusivamente generado por el LLM.
+- Acoplamiento del dominio con infraestructura vectorial.
+- Falta de trazabilidad de fragmentos recuperados.
+- Ausencia de una base técnica para Knowledge Vivo.
+
+### Evidencia
+
+La implementación se encuentra en:
+
+- `app/infrastructure/rag/bge_embedding_provider.py`
+- `app/infrastructure/rag/chroma_knowledge_provider.py`
+- `app/infrastructure/rag/factory.py`
+
+Las pruebas correspondientes se encuentran en:
+
+- `tests/infrastructure/rag/test_bge_embedding_provider.py`
+- `tests/infrastructure/rag/test_chroma_knowledge_provider.py`
+- `tests/infrastructure/rag/test_bge_chroma_integration.py`
+- `tests/infrastructure/rag/test_factory.py`
+
+### Estado
+
+🟢 **Infraestructura RAG implementada y validada.**
+
+🟡 **Integración completa con grounding clínico y Knowledge Vivo pendientes.**
+
+### Próximo paso
+
+Cerrar el circuito:
+
+`recuperación → Evidence → ClinicalPromptBuilder → Gemini → respuesta fundamentada`
+
+y posteriormente implementar:
+
+`upload → extracción → chunking → indexación → consulta → delete → verificación de olvido`

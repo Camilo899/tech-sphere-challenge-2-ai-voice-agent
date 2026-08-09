@@ -36,7 +36,7 @@ nuestra implementación.
 | **G2** | Levantamiento ≤15 min | Proyecto Python/FastAPI con `pyproject.toml` y `uv.lock`; procedimiento final todavía no cerrado. | Levantamiento cronometrado siguiendo exclusivamente README | README + logs + tiempo medido | 🟡 |
 | **G3** | Modelo permitido | Google Gemini 1.5 Flash integrado mediante `google-genai`, con adaptador `GeminiLanguageModel` y configuración mediante `GEMINI_API_KEY`. | Verificar modelo contra `docs/stack-tecnico.md` y ejecutar flujo de respuesta | Código + configuración + pruebas + README + informe | 🟢 |
 | **G4** | Voz en tiempo real | Existe `VoiceProvider` como puerto arquitectónico, pero no hay pipeline STT → LLM → TTS funcional. | Saludo + pregunta trivial en llamada real | Demo + logs + video | 🔴 |
-| **G5** | Knowledge vivo | Existe `KnowledgeProvider` y `FakeKnowledgeProvider`, pero no existe aún upload → indexación → consulta → delete real. | Documento externo: subir → consultar → eliminar → comprobar olvido | Consola + logs + video | 🔴 |
+| **G5** | Knowledge vivo | Existe infraestructura RAG funcional con BGE-M3, ChromaDB, indexación, recuperación y evidencia. Todavía no existe el flujo completo de upload → procesamiento → consulta → delete → verificación de olvido. | Documento externo: subir → consultar → eliminar → comprobar olvido | Consola + logs + video | 🔴 |
 
 ### Regla operativa
 
@@ -136,23 +136,36 @@ Actualmente existe:
 
 ## 3.4 RAG y conocimiento clínico
 
-La arquitectura contempla `KnowledgeProvider`, evidencia y recuperación de
-conocimiento, pero todavía falta construir:
+La infraestructura RAG real ya está implementada.
 
-1. ingestión de documentos;
-2. extracción de texto;
-3. chunking;
-4. embeddings;
-5. almacenamiento vectorial;
-6. recuperación;
-7. filtrado de evidencia;
-8. trazabilidad documento → fragmento → respuesta;
-9. actualización en caliente;
-10. eliminación efectiva.
+Actualmente existe:
+
+1. `BGEEmbeddingProvider` basado en `BAAI/bge-m3`;
+2. `ChromaKnowledgeProvider` basado en ChromaDB persistente;
+3. generación de embeddings normalizados;
+4. indexación de chunks clínicos;
+5. recuperación mediante búsqueda vectorial;
+6. transformación de resultados recuperados en `Evidence`;
+7. factory para construir el proveedor RAG;
+8. pruebas unitarias de embeddings;
+9. pruebas del proveedor ChromaDB;
+10. prueba de integración BGE-M3 → ChromaDB.
+
+El flujo actualmente validado es:
+
+`texto → BGE-M3 → embedding → ChromaDB → búsqueda → Evidence`
+
+Todavía debe cerrarse el flujo completo requerido por el reto:
+
+`documento → extracción → chunking → embeddings → ChromaDB → recuperación → evidencia → respuesta fundamentada`
+
+También permanece pendiente el Knowledge Vivo completo:
+
+`upload → indexación → consulta → delete → verificación de olvido`
 
 ### Estado
 
-🔴 **RAG real pendiente.**
+🟢 **RAG base y grounding del LLM implementados; ingestión documental y Knowledge Vivo pendientes.**
 
 ### Prioridad
 
@@ -312,7 +325,7 @@ pero todavía no existe una interfaz funcional que permita:
 
 ### Estado
 
-🔴 **Pendiente de implementación funcional.**
+🟢 **RAG y grounding del LLM implementados; validación clínica y Knowledge Vivo pendientes.**
 
 ---
 
@@ -534,18 +547,16 @@ No se priorizan funcionalidades puramente estéticas.
 
 ### Orden de prioridad actual
 
-1. **Cerrar trazabilidad de requisitos.**
-2. **Implementar RAG real.**
-3. **Implementar knowledge vivo.**
-4. **Implementar knowledge vivo.**
-5. **Conectar decisión clínica con evidencia real.**
-6. **Implementar STT/LLM/TTS.**
-7. **Construir interfaz de llamada mínima.**
-8. **Construir consola administrativa mínima.**
-9. **Instrumentar métricas obligatorias.**
-10. **Validar dataset y escenarios adversariales.**
-11. **Cerrar README ≤15 minutos.**
-12. **Preparar diagrama, informe y video.**
+1. **Cerrar integración y grounding del RAG existente.**
+2. **Implementar knowledge vivo.**
+3. **Conectar decisión clínica con evidencia real.**
+4. **Implementar STT/LLM/TTS.**
+5. **Construir interfaz de llamada mínima.**
+6. **Construir consola administrativa mínima.**
+7. **Instrumentar métricas obligatorias.**
+8. **Validar dataset y escenarios adversariales.**
+9. **Cerrar README ≤15 minutos.**
+10. **Preparar diagrama, informe y video.**
 
 ---
 
@@ -561,7 +572,7 @@ No se priorizan funcionalidades puramente estéticas.
 
 ## Núcleo de puntuación
 
-- RAG 🔴
+- RAG 🟢
 - LLM 🟢
 - Decisión clínica 🟡
 - Conversación 🟡
