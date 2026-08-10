@@ -1,409 +1,491 @@
-# PROJECT_JOURNAL.md
+PROJECT_JOURNAL.md
+Project Journal
 
-## Project Journal
+Registro de decisiones técnicas, avances, validaciones y aprendizajes relevantes
+del desarrollo del Tech Sphere Challenge 2026.
 
-Registro de decisiones técnicas, avances, validaciones y aprendizajes relevantes del
-desarrollo del Tech Sphere Challenge 2026.
-
----
-
-## 2026-08-07 — Separación de repositorios confirmada
-
-### Contexto
+2026-08-07 — Separación de repositorios confirmada
+Contexto
 
 El directorio de trabajo contiene dos repositorios Git independientes:
 
-- `tech-sphere-challenge-2-ai-voice-agent`
-- `ParticipantArtifacts`
-
-### Decisión
+tech-sphere-challenge-2-ai-voice-agent
+ParticipantArtifacts
+Decisión
 
 Mantener ambos repositorios separados.
 
-`ParticipantArtifacts` se considera la fuente oficial del reto.
+ParticipantArtifacts se considera la fuente oficial del reto.
 
-El repositorio `tech-sphere-challenge-2-ai-voice-agent` contiene nuestra implementación,
-documentación propia, pruebas y evolución.
+El repositorio de desarrollo contiene nuestra implementación, pruebas,
+documentación y evolución.
 
-### Razón
+Razón
 
-Evitar mezclar el historial Git oficial con el historial de desarrollo y mantener una
-trazabilidad clara entre requisitos oficiales e implementación.
+Evitar mezclar el historial Git oficial con el historial de desarrollo y mantener
+una trazabilidad clara entre requisitos oficiales e implementación.
 
----
-
-## 2026-08-07 — Documentación oficial protegida
-
-### Decisión
+2026-08-07 — Documentación oficial protegida
+Decisión
 
 No modificar:
 
-- `docs/rubrica-evaluacion.md`
-- `docs/stack-tecnico.md`
-
-### Razón
+ParticipantArtifacts/docs/rubrica-evaluacion.md
+ParticipantArtifacts/docs/stack-tecnico.md
+ParticipantArtifacts/README.md
+Razón
 
 Son documentos normativos del reto.
 
-La interpretación operativa se realizará mediante:
+La interpretación operativa se realiza mediante:
 
-- `docs/CURRENT_STATE.md`
-- `docs/AI_CONTEXT.md`
-- `docs/challenge/CHALLENGE_ANALYSIS.md`
+docs/CURRENT_STATE.md
+docs/AI_CONTEXT.md
+docs/PROJECT_JOURNAL.md
+docs/challenge/CHALLENGE_ANALYSIS.md
+2026-08-07 — Matriz de trazabilidad
+Decisión
 
----
+Crear:
 
-## 2026-08-07 — Matriz de trazabilidad
+docs/challenge/CHALLENGE_ANALYSIS.md
 
-### Decisión
+Propósito
 
-Crear y utilizar:
+Traducir:
 
-`docs/challenge/CHALLENGE_ANALYSIS.md`
+Requisito → Implementación → Prueba → Evidencia → Entregable
 
-### Propósito
+Razón
 
-Traducir cada requisito oficial en:
+La rúbrica evalúa aquello que puede observarse y verificarse.
 
-`Requisito → Implementación → Prueba → Evidencia → Entregable`
+Cada funcionalidad debe planificarse junto con su prueba y evidencia.
 
-### Razón
-
-La rúbrica evalúa únicamente aquello que puede observarse o verificarse.
-
-Por tanto, cada funcionalidad debe planificarse junto con su prueba y evidencia.
-
----
-
-## 2026-08-07 — Estrategia incremental
-
-### Decisión
+2026-08-07 — Estrategia incremental
+Decisión
 
 No desarrollar funcionalidades por estética o complejidad.
 
 Cada incremento debe aportar al menos:
 
-- funcionalidad;
-- prueba;
-- evidencia;
-- métrica;
-- documentación;
-- reducción de riesgo.
+funcionalidad;
+prueba;
+evidencia;
+métrica;
+documentación;
+reducción de riesgo.
+Razón
 
-### Razón
+El reto contiene compuertas eliminatorias y criterios de puntuación.
 
-El reto contiene cinco compuertas eliminatorias y seis criterios de puntuación.
-La prioridad es maximizar la probabilidad de superar las compuertas y generar evidencia
-objetiva.
+La prioridad es maximizar la probabilidad de superar las compuertas y generar
+evidencia objetiva.
 
----
+2026-08-07 — Prioridad clínica
+Decisión
 
-## 2026-08-07 — Prioridad clínica
+El diseño debe ser conservador frente a escenarios clínicos ambiguos o
+potencialmente peligrosos.
 
-### Decisión
+Razón
 
-El diseño debe ser conservador frente a escenarios clínicos ambiguos o potencialmente
-peligrosos.
-
-### Razón
-
-La rúbrica establece que el falso negativo es la falla catastrófica.
+El falso negativo clínico representa un riesgo crítico.
 
 La lógica de decisión tendrá prioridad sobre respuestas conversacionales genéricas.
 
----
-
-## 2026-08-07 — Estado técnico de partida
-
-### Estado
-
-La arquitectura hexagonal y una primera capa de dominio/aplicación ya están implementadas.
-
-Existe:
-
-- dominio clínico;
-- servicios de conocimiento;
-- orquestación de conversación;
-- casos de uso;
-- DTOs;
-- puertos;
-- FastAPI;
-- endpoints iniciales;
-- manejo global de excepciones.
-
-### Próximo foco
-
-Integrar progresivamente los componentes necesarios para:
-
-`Conversación → conocimiento → decisión → escalamiento → resumen → observabilidad`
-
----
-
-## Formato para futuras entradas
-
-Cada decisión significativa deberá registrar:
-
-### Contexto
-
-Qué problema o requisito originó la decisión.
-
-### Alternativas
-
-Qué opciones fueron consideradas.
-
-### Decisión
-
-Qué se implementó.
-
-### Razón
-
-Por qué se eligió.
-
-### Riesgos
-
-Qué riesgos introduce o reduce.
-
-### Evidencia
-
-Qué prueba, log, commit o artefacto permite verificarla.
-
-## 2026-08-07 — INC-001: Selección de Modelos e Infraestructura RAG
-
-### Contexto
-Se requiere definir el modelo de lenguaje permitido (Compuerta G3) y diseñar la estrategia técnica para el RAG y Knowledge Vivo (Compuerta G5) con el fin de avanzar en el flujo operativo sin alterar el dominio.
-
-### Alternativas Consideradas
-1. **Llama 3.1 70B (vía Groq):** Excelente velocidad en texto, pero sujeta a límites de rate-limiting severos para flujos continuos de audio/voz de múltiples usuarios.
-2. **Phi-3.5 Mini / Llama 3.2 (Local vía Ollama):** Ideal para privacidad absoluta, pero introduce penalizaciones de latencia críticas en setups de hardware estándar, arriesgando el P95 de la interfaz de voz.
-3. **Google Gemini 1.5 Flash (API):** Óptima relación entre velocidad (Time-to-First-Token bajo para voz), ventana de contexto amplia para RAG clínico extenso y costo por token reducido.
-
-### Decisión
-1. **LLM Principal:** Google Gemini 1.5 Flash mediante el SDK oficial.
-2. **Vector Store:** ChromaDB en modo embebido local o persistencia en disco ligero dentro del repositorio.
-3. **Embeddings:** `text-embedding-004` de Google (o complementado con un modelo compatible local si se requiere aislamiento estricto de pruebas).
-
-### Razón
-Gemini 1.5 Flash asegura latencias ultra bajas requeridas para que la conversación simulada o real de voz se sienta fluida, mitigando el riesgo de la métrica de fin-de-habla-a-audio. ChromaDB en modo embebido elimina dependencias de infraestructura externa compleja (como instancias de Docker separadas para bases vectoriales), garantizando que el levantamiento del proyecto se mantenga estrictamente por debajo de los 15 minutos (Compuerta G2).
-
-### Riesgos Mitigados
-- **Latencia excesiva en turnos:** Mitigado por la velocidad de Gemini 1.5 Flash.
-- **Complejidad de despliegue:** Reducida al mínimo usando bases de datos vectoriales en bebidas en Python controladas por `uv`.
-
-### Evidencia
-Este diseño técnico queda plasmado como el punto de partida para las implementaciones de los adaptadores en `infrastructure/`.
----
-
-## 2026-08-09 — INC-001: Implementación y validación de LLM + RAG
-
-### Contexto
-
-La decisión registrada en INC-001 pasó de diseño arquitectónico a implementación
-funcional dentro del flujo de conversación.
-
-El objetivo fue cerrar el circuito:
-
-`mensaje del paciente → recuperación de evidencia → construcción de prompt → LLM → respuesta → conversación`
-
-sin introducir lógica de infraestructura dentro del dominio clínico.
-
-### Implementación
-
-Se implementó el adaptador:
-
-`app/infrastructure/llm/gemini_language_model.py`
-
-El adaptador utiliza el SDK oficial `google-genai` y expone el contrato definido por:
-
-`app.domain.ports.language_model.LanguageModel`
-
-La configuración de la API se realiza mediante:
-
-`GEMINI_API_KEY`
-
-El modelo seleccionado es:
-
-`gemini-1.5-flash`
-
-### Integración con RAG
-
-La recuperación de conocimiento permanece encapsulada mediante:
-
-`KnowledgeProvider → ClinicalKnowledgeService`
-
-La evidencia recuperada se entrega al:
-
-`ClinicalPromptBuilder`
-
-que construye el prompt clínico incluyendo el mensaje del paciente y los fragmentos
-recuperados.
-
-Posteriormente:
-
-`ClinicalResponseService`
-
-coordina:
-
-`KnowledgeService → PromptBuilder → LanguageModel`
-
-y devuelve un `LLMResponse`.
-
-### Integración con la conversación
-
-`ConversationOrchestrator` fue ampliado para utilizar `ClinicalResponseService`.
-
-El flujo resultante es:
-
-1. Se registra el mensaje del paciente.
-2. Se recupera evidencia clínica.
-3. Se genera la respuesta mediante el servicio clínico.
-4. La respuesta del LLM se registra como mensaje del asistente.
-5. Se conserva la evidencia recuperada en el contexto.
-6. Se ejecuta la decisión clínica.
-7. Se actualiza el estado de la conversación.
-
-La integración mantiene la separación entre dominio, aplicación e infraestructura.
-
-### Pruebas
-
-Se incorporaron pruebas para:
-
-- contrato `LanguageModel`;
-- fake del modelo de lenguaje;
-- adaptador `GeminiLanguageModel`;
-- `ClinicalPromptBuilder`;
-- `ClinicalResponseService`;
-- `ConversationOrchestrator`;
-- `SendMessageUseCase`;
-- endpoint `/messages`.
-
-La validación completa de la aplicación quedó en:
-
-`60 passed`
-
-### Validación
-
-Comando utilizado:
-
-`uv run python -m pytest -q`
-
-Resultado:
-
-`60 passed`
-
-También fueron validadas individualmente las piezas críticas del circuito:
-
-- `ClinicalResponseService`: 1 passed
-- `SendMessageUseCase`: 1 passed
-- endpoint `/messages`: 1 passed
-
-### Evidencia
-
-La implementación quedó integrada en el commit técnico correspondiente a INC-001.
-
-Los principales artefactos implementados o modificados son:
-
-- `app/infrastructure/llm/gemini_language_model.py`
-- `app/domain/services/clinical_response_service.py`
-- `app/domain/services/conversation_orchestrator.py`
-- `app/application/factories/conversation_orchestrator_factory.py`
-- `app/application/use_cases/send_message.py`
-- `app/presentation/api/dependencies.py`
-- pruebas del adaptador, servicio, caso de uso y endpoint
-- `pyproject.toml`
-- `uv.lock`
-
-### Estado
-
-INC-001 queda implementado y validado.
-
-La integración real del LLM está funcional bajo configuración mediante
-`GEMINI_API_KEY`, mientras que la recuperación RAG continúa utilizando la
-abstracción `KnowledgeProvider` y su implementación basada en ChromaDB.
-
-El siguiente objetivo es continuar con el cierre del circuito operativo y las
-compuertas restantes, especialmente Knowledge Vivo y el pipeline de voz.
-
----
-
-## 2026-08-09 — INC-003: Infraestructura RAG con BGE-M3 y ChromaDB
-
-### Contexto
-
-El proyecto requiere recuperación de conocimiento clínico fundamentado para
-reducir alucinaciones y permitir trazabilidad de la evidencia utilizada por
-el agente.
-
-La arquitectura ya contaba con el puerto `KnowledgeProvider`, por lo que la
-implementación se realizó mediante adaptadores de infraestructura sin alterar
-el dominio.
-
-### Alternativas
-
-Se evaluó mantener únicamente el `FakeKnowledgeProvider` para las pruebas o
-implementar una infraestructura RAG real.
-
-Se eligió implementar el stack RAG real con embeddings locales y almacenamiento
-vectorial persistente.
-
-### Decisión
+2026-08-07 — Estado técnico de partida
+Estado
+
+La arquitectura hexagonal y la primera capa de dominio/aplicación estaban
+implementadas.
+
+Existían:
+
+dominio clínico;
+servicios de conocimiento;
+orquestación;
+casos de uso;
+DTOs;
+puertos;
+FastAPI;
+endpoints iniciales;
+exception handler.
+Próximo foco
+
+Integrar progresivamente:
+
+Conversación
+→ conocimiento
+→ decisión
+→ escalamiento
+→ resumen
+→ observabilidad
+2026-08-07 — INC-001: Selección del modelo e infraestructura RAG
+Contexto
+
+Se requirió seleccionar un modelo permitido por el reto y definir la arquitectura
+para RAG y Knowledge Vivo.
+
+Alternativas consideradas
+Llama 3.1 70B vía Groq.
+Phi-3.5 Mini / Llama 3.2 local.
+Google Gemini 1.5 Flash vía API.
+Decisión
+
+Se seleccionó:
+
+Google Gemini 1.5 Flash
+
+para el razonamiento clínico.
+
+La arquitectura RAG utilizaría:
+
+BGE-M3 para embeddings;
+ChromaDB como almacenamiento vectorial;
+puertos desacoplados;
+evidencia estructurada.
+Razón
+
+La solución busca mantener baja complejidad operativa, preservar una arquitectura
+hexagonal y facilitar el levantamiento del proyecto.
+
+2026-08-09 — INC-001: Implementación y validación del LLM
+Contexto
+
+La selección de Gemini pasó de diseño a integración real.
+
+Objetivo:
+
+mensaje
+→ recuperación de evidencia
+→ prompt
+→ LLM
+→ respuesta
+Implementación
 
 Se implementó:
 
-- `BGEEmbeddingProvider` utilizando `BAAI/bge-m3`;
-- `ChromaKnowledgeProvider` utilizando ChromaDB persistente;
-- embeddings normalizados;
-- indexación de chunks mediante `index(...)`;
-- recuperación mediante `retrieve(...)`;
-- transformación de resultados en `Evidence`;
-- factory `create_chroma_knowledge_provider()`;
-- pruebas unitarias y de integración.
+app/infrastructure/llm/gemini_language_model.py
 
-El flujo validado es:
+Utilizando:
 
-`texto → BGE-M3 → embedding → ChromaDB → búsqueda → Evidence`
+google-genai
 
-### Razón
+y el puerto:
 
-La solución permite disponer de recuperación vectorial local sin acoplar el
-dominio a ChromaDB ni al modelo concreto de embeddings.
+LanguageModel
 
-Esto mantiene la arquitectura hexagonal y permite sustituir posteriormente
-los adaptadores sin modificar los contratos del dominio.
+Configuración:
 
-### Riesgos reducidos
+GEMINI_API_KEY
 
-- Dependencia de conocimiento exclusivamente generado por el LLM.
-- Acoplamiento del dominio con infraestructura vectorial.
-- Falta de trazabilidad de fragmentos recuperados.
-- Ausencia de una base técnica para Knowledge Vivo.
+Modelo:
 
-### Evidencia
+gemini-1.5-flash
 
-La implementación se encuentra en:
+Integración
 
-- `app/infrastructure/rag/bge_embedding_provider.py`
-- `app/infrastructure/rag/chroma_knowledge_provider.py`
-- `app/infrastructure/rag/factory.py`
+La evidencia se mantiene encapsulada mediante:
 
-Las pruebas correspondientes se encuentran en:
+KnowledgeProvider → ClinicalKnowledgeService
 
-- `tests/infrastructure/rag/test_bge_embedding_provider.py`
-- `tests/infrastructure/rag/test_chroma_knowledge_provider.py`
-- `tests/infrastructure/rag/test_bge_chroma_integration.py`
-- `tests/infrastructure/rag/test_factory.py`
+La evidencia recuperada llega a:
 
-### Estado
+ClinicalPromptBuilder
 
-🟢 **Infraestructura RAG implementada y validada.**
+Posteriormente:
 
-🟡 **Integración completa con grounding clínico y Knowledge Vivo pendientes.**
+ClinicalResponseService
 
-### Próximo paso
+coordina:
 
-Cerrar el circuito:
+KnowledgeService
+→ PromptBuilder
+→ LanguageModel
+Integración con conversación
 
-`recuperación → Evidence → ClinicalPromptBuilder → Gemini → respuesta fundamentada`
+ConversationOrchestrator utiliza ClinicalResponseService.
 
-y posteriormente implementar:
+Flujo:
 
-`upload → extracción → chunking → indexación → consulta → delete → verificación de olvido`
+registrar mensaje;
+recuperar evidencia;
+generar respuesta;
+registrar respuesta;
+conservar evidencia;
+ejecutar decisión;
+actualizar estado.
+Validación
+
+La suite correspondiente fue ejecutada satisfactoriamente.
+
+Estado
+
+🟢 LLM integrado y validado.
+
+2026-08-09 — INC-003: Infraestructura RAG con BGE-M3 y ChromaDB
+Contexto
+
+Se requiere recuperación de conocimiento clínico fundamentado para reducir
+alucinaciones y proporcionar trazabilidad.
+
+La arquitectura ya contaba con KnowledgeProvider.
+
+Decisión
+
+Implementar:
+
+BGEEmbeddingProvider;
+ChromaKnowledgeProvider;
+ChromaKnowledgeIndexer;
+embeddings normalizados;
+persistencia ChromaDB;
+recuperación;
+eliminación por documento;
+transformación a Evidence;
+factory de infraestructura.
+Flujo validado
+texto
+→ BGE-M3
+→ embedding
+→ ChromaDB
+→ búsqueda
+→ Evidence
+Razón
+
+Permite disponer de recuperación vectorial local sin acoplar el dominio a
+ChromaDB ni al modelo de embeddings.
+
+Riesgos reducidos
+dependencia exclusiva del LLM;
+falta de trazabilidad;
+acoplamiento del dominio;
+ausencia de infraestructura para Knowledge Vivo.
+Evidencia
+
+Implementación:
+
+app/infrastructure/rag/bge_embedding_provider.py
+app/infrastructure/rag/chroma_knowledge_provider.py
+app/infrastructure/rag/chroma_knowledge_indexer.py
+app/infrastructure/rag/factory.py
+
+Pruebas:
+
+tests/infrastructure/rag/test_bge_embedding_provider.py
+tests/infrastructure/rag/test_chroma_knowledge_provider.py
+tests/infrastructure/rag/test_chroma_knowledge_indexer.py
+tests/infrastructure/rag/test_bge_chroma_integration.py
+tests/infrastructure/rag/test_factory.py
+Estado
+
+🟢 Infraestructura RAG implementada y validada.
+
+2026-08-09 — INC-004: Servicio de ingestión de conocimiento clínico
+Contexto
+
+La infraestructura RAG ya dispone de:
+
+embeddings;
+almacenamiento;
+recuperación;
+eliminación.
+
+El siguiente paso fue separar la responsabilidad de ingestión del almacenamiento
+concreto.
+
+Decisión
+
+Implementar:
+
+ClinicalKnowledgeIngestionService
+
+Ubicación:
+
+app/domain/services/clinical_knowledge_ingestion_service.py
+
+El servicio recibe:
+
+document_name;
+section;
+chunk_id;
+text.
+
+y delega la operación a:
+
+KnowledgeIndexer
+
+Flujo
+ClinicalKnowledgeIngestionService
+            ↓
+      KnowledgeIndexer
+            ↓
+  ChromaKnowledgeIndexer
+            ↓
+         ChromaDB
+Razón
+
+La ingestión no debe depender directamente de ChromaDB.
+
+El servicio utiliza el puerto KnowledgeIndexer para mantener la separación entre
+la lógica y la infraestructura.
+
+Pruebas
+
+Se incorporó:
+
+tests/domain/services/test_clinical_knowledge_ingestion_service.py
+
+La prueba verifica que el servicio delega correctamente la información del chunk.
+
+También se amplió:
+
+tests/infrastructure/rag/test_chroma_knowledge_indexer.py
+
+para verificar que la eliminación de un documento no elimina chunks de otros
+documentos.
+
+Validación
+
+Ruff:
+
+uv run ruff check app tests
+All checks passed!
+
+Pytest:
+
+uv run python -m pytest
+69 passed in 77.92s
+Evidencia
+
+Commit:
+
+94217df feat: integrate clinical knowledge ingestion
+
+Estado
+
+🟢 Servicio de ingestión implementado y probado.
+
+🟡 Knowledge Vivo todavía no está cerrado.
+
+Pendiente
+upload
+→ extracción
+→ chunking
+→ ingestión
+→ indexación
+→ consulta
+→ evidencia
+→ respuesta
+→ delete
+→ verificación de olvido
+2026-08-09 — Checkpoint de continuidad
+Estado Git
+
+Branch:
+
+main
+
+Working tree:
+
+clean
+
+Remote:
+
+origin/main
+
+Último commit:
+
+94217df feat: integrate clinical knowledge ingestion
+
+Validación
+
+Ruff:
+
+All checks passed!
+
+Pytest:
+
+69 passed
+
+Estado de compuertas
+G1 🟡
+G2 🟡
+G3 🟢
+G4 🔴
+G5 🟡
+Estado técnico
+Dominio              🟢
+Application          🟢
+API                  🟢
+LLM                  🟢
+RAG                  🟢
+Grounding            🟢
+Ingestion            🟢
+Knowledge Vivo       🟡
+Decisión clínica     🟡
+Voz                  🔴
+Observabilidad       🔴
+Administración       🔴
+Demo                 🔴
+Próximo objetivo
+
+Completar:
+
+INC-004 — Knowledge Vivo
+
+con el flujo observable:
+
+Documento
+→ Upload
+→ Extract
+→ Chunk
+→ Index
+→ Query
+→ Evidence
+→ Grounded response
+→ Delete
+→ Verify forgetting
+
+Este checkpoint debe utilizarse como punto de recuperación si el desarrollo
+continúa en una nueva conversación.
+
+Formato para futuras entradas
+
+Cada decisión significativa deberá registrar:
+
+Contexto
+
+Qué problema o requisito originó la decisión.
+
+Alternativas
+
+Qué opciones fueron consideradas.
+
+Decisión
+
+Qué se implementó.
+
+Razón
+
+Por qué se eligió.
+
+Riesgos
+
+Qué riesgos introduce o reduce.
+
+Evidencia
+
+Qué prueba, log, commit o artefacto permite verificarla.
+
+Estado
+
+Debe distinguir claramente entre:
+
+implementado;
+parcial;
+pendiente;
+validado.
+
+No declarar una compuerta como superada únicamente por la existencia de código.

@@ -2,21 +2,24 @@
 
 ## Estado actual — Tech Sphere Challenge 2026
 
-**Fecha:** 7 de agosto de 2026
-**Fase:** Preparación técnica e implementación incremental
-**Prioridad:** Superar primero las compuertas eliminatorias y construir evidencia verificable.
+**Fecha:** 9 de agosto de 2026
+
+**Fase:** Implementación incremental del núcleo funcional
+
+**Prioridad:** Cerrar Knowledge Vivo y posteriormente las compuertas eliminatorias
+antes de realizar refinamientos estéticos.
 
 ---
 
-## 1. Repositorios y separación de responsabilidades
+# 1. Repositorios y separación de responsabilidades
 
-### 1.1 Repositorio de desarrollo y entrega
+## 1.1 Repositorio de desarrollo
 
 Ruta local:
 
 `clinical-ai-voice-agent/tech-sphere-challenge-2-ai-voice-agent/`
 
-Repositorio Git:
+Repositorio:
 
 `git@github.com:Camilo899/tech-sphere-challenge-2-ai-voice-agent.git`
 
@@ -24,16 +27,21 @@ Rama:
 
 `main`
 
-Estado verificado:
+Estado:
 
-- `main` sincronizada con `origin/main`.
-- Último commit: `148b425`
-- Working tree con documentación propia aún sin seguimiento.
-- No se deben mezclar los historiales del repositorio oficial y el repositorio de desarrollo.
+* rama `main` sincronizada con `origin/main`;
+* working tree limpio;
+* último commit:
 
-### 1.2 Repositorio oficial del reto
+`94217df feat: integrate clinical knowledge ingestion`
 
-Ruta local:
+El repositorio contiene la implementación, pruebas y documentación propia.
+
+---
+
+## 1.2 Repositorio oficial
+
+Ruta:
 
 `clinical-ai-voice-agent/ParticipantArtifacts/`
 
@@ -41,312 +49,641 @@ Repositorio:
 
 `TechSphere2026/ParticipantArtifacts`
 
-Este repositorio contiene el material oficial proporcionado por Tech Sphere.
+Contiene:
 
-Su contenido se utiliza como fuente normativa y de datos.
+* requisitos oficiales;
+* rúbrica;
+* stack técnico;
+* datasets;
+* material normativo.
 
-No se incorpora su historial Git al repositorio de desarrollo.
-
----
-
-## 2. Documentación oficial
-
-Los siguientes archivos son normativos:
-
-- `ParticipantArtifacts/docs/rubrica-evaluacion.md`
-- `ParticipantArtifacts/docs/stack-tecnico.md`
-- `ParticipantArtifacts/README.md`
-
-### Regla
-
-Los documentos oficiales **NO se modifican**.
-
-Nuestra documentación interpreta y operacionaliza estos documentos, pero no los reemplaza.
+No se modifica ni se mezcla su historial Git con el repositorio de desarrollo.
 
 ---
 
-## 3. Documentación propia
+# 2. Documentación propia
 
-La documentación de continuidad del proyecto se encuentra en:
+La documentación de continuidad se encuentra en:
 
-- `docs/AI_CONTEXT.md`
-- `docs/CURRENT_STATE.md`
-- `docs/PROJECT_JOURNAL.md`
-- `docs/challenge/CHALLENGE_ANALYSIS.md`
+* `docs/AI_CONTEXT.md`
+* `docs/CURRENT_STATE.md`
+* `docs/PROJECT_JOURNAL.md`
+* `docs/challenge/CHALLENGE_ANALYSIS.md`
 
-Estos documentos sí forman parte del desarrollo del proyecto.
-
----
-
-## 4. Estado Git actual
-
-Último commit:
-
-`148b425 feat(application): add send message DTOs and API schemas`
-
-Historial reciente relevante:
-
-- `148b425` — Send message DTOs and API schemas
-- `d87bf3b` — Global exception handling
-- `ef9e9e8` — Health check endpoint
-- `605487d` — Follow-up endpoint connected to application use case
-- `291c6e2` — Initial FastAPI application and follow-up route
-- `0ef1ff7` — Start follow-up API schemas
-- `6758e8c` — Start follow-up request/response DTOs
-- `271e906` — Decision explanation value object
-- `66b71db` — Clinical query builder service
-- `bcfead4` — Composition root for conversation orchestrator
-- `673d92e` — Clinical knowledge service
-- `8bc6ec0` — Knowledge provider port
-
-Pendiente de seguimiento Git:
-
-- `docs/AI_CONTEXT.md`
-- `docs/CURRENT_STATE.md`
-- `docs/PROJECT_JOURNAL.md`
-- `docs/challenge/CHALLENGE_ANALYSIS.md`
+Los documentos oficiales del reto permanecen sin modificaciones.
 
 ---
 
-## 5. Arquitectura actual
+# 3. Validación actual
 
-La solución utiliza una arquitectura hexagonal con separación entre:
+## Ruff
 
-- Presentation
-- Application
-- Domain
-- Infrastructure
+Comando:
 
-Stack base:
+```text
+uv run ruff check app tests
+```
 
-- Python 3.12
-- FastAPI
-- Pydantic
-- Pytest
-- Ruff
-- MyPy
-- uv
+Resultado:
 
-La arquitectura existente debe extenderse para cumplir el reto.
+```text
+All checks passed!
+```
 
-No se rediseñará innecesariamente la arquitectura.
+## Pytest
 
----
+Comando:
 
-## 6. Implementación existente
+```text
+uv run python -m pytest
+```
 
-Ya existe una primera capa funcional del dominio de conversación postoperatoria.
+Resultado:
 
-Componentes implementados incluyen:
+```text
+69 passed in 77.92s
+```
 
-- Entidades de dominio.
-- Value Objects.
-- Servicios de dominio.
-- Puertos.
-- Servicios de conocimiento clínico.
-- Orquestador de conversación.
-- `LanguageModel`.
-- `GeminiLanguageModel`.
-- `ClinicalPromptBuilder`.
-- `ClinicalResponseService`.
-- Application DTOs.
-- Use Cases.
-- Composition Root.
-- Dependency Injection.
-- FastAPI.
-- Health endpoint.
-- Follow-up endpoint.
-- Global exception handler.
-- Send message DTOs.
-- API schemas.
-- `BGEEmbeddingProvider`.
-- `ChromaKnowledgeProvider`.
-- Factory de infraestructura RAG.
-- Indexación de chunks clínicos.
-- Recuperación de evidencia mediante búsqueda vectorial.
-- Integración de evidencia en `ConversationOrchestrator`.
-- Grounding del prompt clínico mediante `ClinicalPromptBuilder`.
-- Integración BGE-M3 → ChromaDB validada mediante pruebas.
+Estado:
 
-Existe `StartFollowUpUseCase`, responsable de:
-
-1. Crear el contexto de conversación.
-2. Inicializar el estado conversacional.
-3. Inicializar la decisión clínica.
-4. Persistir el contexto mediante `ConversationRepository`.
-
-Estado inicial:
-
-- `ConversationState.GREETING`
-- `ClinicalDecision.CONTINUE`
+🟢 **69/69 pruebas pasando.**
 
 ---
 
-## 7. Estado del reto
+# 4. Arquitectura
 
-La matriz operativa de trazabilidad ya está creada:
+La solución utiliza arquitectura hexagonal:
 
-`docs/challenge/CHALLENGE_ANALYSIS.md`
+```text
+Presentation
+    ↓
+Application
+    ↓
+Domain
+    ↓
+Ports
+    ↓
+Infrastructure
+```
 
-Su función es traducir:
+Componentes principales:
 
-`Requisito → Implementación → Prueba → Evidencia → Entregable`
+### Presentation
 
-Actualmente las compuertas y criterios están identificados, pero todavía no deben marcarse como superados sin evidencia verificable.
+* FastAPI;
+* API schemas;
+* endpoints;
+* exception handler.
+
+### Application
+
+* DTOs;
+* use cases;
+* fakes;
+* factories;
+* orchestration.
+
+### Domain
+
+* entities;
+* value objects;
+* domain services;
+* clinical decision logic;
+* ports.
+
+### Infrastructure
+
+* Gemini;
+* embeddings;
+* ChromaDB;
+* RAG;
+* indexación.
+
+La arquitectura no debe rediseñarse innecesariamente.
 
 ---
 
-## 8. Compuertas eliminatorias
+# 5. Implementación actual
 
-La implementación final debe superar:
+## 5.1 Dominio y aplicación
 
-### G1 — 4 entregables
+Existe una base funcional para:
 
-1. Repositorio.
-2. Diagrama.
-3. Informe final.
-4. Video.
+* contexto de conversación;
+* casos de seguimiento;
+* mensajes;
+* estado conversacional;
+* decisiones clínicas;
+* niveles de riesgo;
+* evidencia;
+* explicaciones de decisión;
+* análisis conversacional;
+* razonamiento clínico;
+* clasificación de síntomas;
+* evaluación de riesgo;
+* resumen;
+* orquestación.
 
-### G2 — Levantamiento ≤15 minutos
+Servicios relevantes:
 
-La solución debe poder levantarse siguiendo exclusivamente el README.
+* `ConversationOrchestrator`
+* `ClinicalKnowledgeService`
+* `ClinicalQueryBuilder`
+* `ClinicalPromptBuilder`
+* `ClinicalResponseService`
+* `ClinicalReasoner`
+* `DecisionEngine`
+* `RiskAssessmentService`
+* `SymptomClassifier`
+* `ConversationAnalysisService`
+* `SummaryGenerationService`
 
-### G3 — Modelo permitido
+Casos de uso:
 
-🟢 **IMPLEMENTADO**
+* `StartFollowUpUseCase`
+* `SendMessageUseCase`
 
-El modelo seleccionado es:
+---
+
+# 6. API
+
+Actualmente existe:
+
+* aplicación FastAPI;
+* health endpoint;
+* follow-up endpoint;
+* messages endpoint;
+* schemas Pydantic;
+* DTOs;
+* dependency injection;
+* composition root;
+* global exception handler.
+
+Estado:
+
+🟢 **API base implementada y probada.**
+
+---
+
+# 7. LLM
+
+Modelo seleccionado:
 
 **Google Gemini 1.5 Flash**
 
-La integración se realiza mediante:
+Integración:
 
-- SDK `google-genai`;
-- puerto `LanguageModel`;
-- adaptador `GeminiLanguageModel`;
-- variable de entorno `GEMINI_API_KEY`;
-- `ClinicalResponseService`;
-- `ClinicalPromptBuilder`;
-- integración con `ConversationOrchestrator`.
+* `google-genai`;
+* `LanguageModel`;
+* `GeminiLanguageModel`;
+* `ClinicalResponseService`;
+* `ClinicalPromptBuilder`;
+* `ConversationOrchestrator`.
 
-La suite automatizada actual reporta:
+Configuración:
 
-`60 passed`
+`GEMINI_API_KEY`
 
-La elección y justificación técnica están registradas en
-`docs/PROJECT_JOURNAL.md`.
+Estado:
 
-G3 se considera implementado a nivel técnico. La evidencia final de entrega
-todavía deberá incluir configuración, código, README, informe y demostración.
-
-
-### G4 — Voz en tiempo real
-
-El jurado debe poder:
-
-- iniciar una llamada desde navegador/API;
-- hablar mediante micrófono;
-- recibir respuesta hablada.
-
-### G5 — Knowledge vivo
-
-Debe ser posible:
-
-1. Subir un documento desde la consola.
-2. Procesarlo.
-3. Consultarlo mediante el agente.
-4. Eliminarlo.
-5. Verificar que deja de ser recuperable.
+🟢 **LLM integrado y validado mediante pruebas.**
 
 ---
 
-## 9. Criterios de puntuación
+# 8. RAG
 
-| Criterio | Puntos |
-|---|---:|
-| RAG, precisión clínica y conocimiento vivo | 20 |
-| Lógica de decisión y escalamiento | 20 |
-| Comprensión del problema y conversación | 15 |
-| Calidad de conversación de voz | 15 |
-| Video | 15 |
-| Repositorio, proceso y buenas prácticas | 15 |
-| **Total** | **100** |
+La infraestructura RAG real está implementada.
 
-La prioridad técnica se concentra en los primeros dos criterios porque constituyen el núcleo funcional de la solución.
+## 8.1 Embeddings
+
+Proveedor:
+
+`BGEEmbeddingProvider`
+
+Modelo:
+
+`BAAI/bge-m3`
+
+## 8.2 Vector store
+
+Proveedor:
+
+`ChromaKnowledgeProvider`
+
+Tecnología:
+
+`ChromaDB`
+
+## 8.3 Indexador
+
+Existe:
+
+`ChromaKnowledgeIndexer`
+
+Permite:
+
+* indexar chunks;
+* conservar metadatos;
+* identificar documentos;
+* eliminar documentos.
+
+## 8.4 Recuperación
+
+Flujo:
+
+```text
+Consulta
+   ↓
+BGE-M3
+   ↓
+ChromaDB
+   ↓
+Resultados
+   ↓
+Evidence
+```
+
+## 8.5 Grounding
+
+Flujo:
+
+```text
+KnowledgeProvider
+   ↓
+ClinicalKnowledgeService
+   ↓
+Evidence
+   ↓
+ClinicalPromptBuilder
+   ↓
+Gemini
+```
+
+Estado:
+
+🟢 **RAG base implementado y validado.**
+
+🟢 **Grounding implementado.**
+
+🟡 **Evaluación clínica integral pendiente.**
 
 ---
 
-## 10. Métricas obligatorias
+# 9. Knowledge Ingestion
 
-El sistema debe instrumentar desde la implementación:
+Se implementó:
 
-- Latencia P50.
-- Latencia P95.
-- Latencia desde fin de habla hasta inicio del audio.
-- Tokens de entrada por turno.
-- Tokens de salida por turno.
-- Tokens por llamada.
-- Invocaciones al LLM por turno.
-- Consultas RAG por llamada.
-- Costo estimado por llamada.
+`ClinicalKnowledgeIngestionService`
 
-Las métricas deberán proceder de logs verificables.
+Responsabilidad:
+
+recibir un chunk clínico y delegar su indexación mediante
+`KnowledgeIndexer`.
+
+Flujo:
+
+```text
+ClinicalKnowledgeIngestionService
+            ↓
+      KnowledgeIndexer
+            ↓
+  ChromaKnowledgeIndexer
+            ↓
+         ChromaDB
+```
+
+También existe prueba de:
+
+* delegación de ingestión;
+* eliminación de chunks pertenecientes a un documento.
+
+Estado:
+
+🟢 **Servicio de ingestión implementado y probado.**
 
 ---
 
-## 11. Riesgos prioritarios
+# 10. Knowledge Vivo
 
-### Críticos
+Knowledge Vivo todavía no está completo.
+
+## Ya implementado
+
+* embeddings;
+* almacenamiento vectorial;
+* recuperación;
+* evidencia;
+* indexación;
+* eliminación por documento;
+* servicio de ingestión.
+
+## Falta implementar
+
+```text
+Documento
+   ↓
+Upload
+   ↓
+Extracción
+   ↓
+Chunking
+   ↓
+Ingestión
+   ↓
+Indexación
+   ↓
+Consulta
+   ↓
+Evidence
+   ↓
+Respuesta fundamentada
+   ↓
+Delete
+   ↓
+Verificación de olvido
+```
+
+Estado:
+
+🟡 **En implementación.**
+
+La compuerta G5 no debe marcarse como superada hasta demostrar el flujo completo.
+
+---
+
+# 11. Compuertas eliminatorias
+
+## G1 — Cuatro entregables
+
+Requiere:
+
+1. repositorio;
+2. diagrama;
+3. informe;
+4. video.
+
+Estado:
+
+🟡 **En progreso.**
+
+---
+
+## G2 — Levantamiento ≤15 minutos
+
+La base técnica utiliza:
+
+* `pyproject.toml`;
+* `uv.lock`;
+* dependencias reproducibles.
+
+Falta realizar una prueba cronometrada utilizando únicamente el README final.
+
+Estado:
+
+🟡 **Pendiente de validación.**
+
+---
+
+## G3 — Modelo permitido
+
+Modelo:
+
+**Google Gemini 1.5 Flash**
+
+Estado:
+
+🟢 **Implementado.**
+
+---
+
+## G4 — Voz en tiempo real
+
+Falta implementar:
+
+```text
+Micrófono
+   ↓
+STT
+   ↓
+RAG / decisión / LLM
+   ↓
+TTS
+   ↓
+Audio
+```
+
+Estado:
+
+🔴 **Pendiente.**
+
+---
+
+## G5 — Knowledge Vivo
+
+La infraestructura necesaria existe parcialmente.
+
+Falta demostrar:
+
+```text
+upload
+→ process
+→ query
+→ delete
+→ verify forgetting
+```
+
+Estado:
+
+🟡 **En implementación.**
+
+---
+
+# 12. Criterios de puntuación
+
+| Criterio                                   | Estado |
+| ------------------------------------------ | ------ |
+| RAG, precisión clínica y conocimiento vivo | 🟡     |
+| Lógica de decisión y escalamiento          | 🟡     |
+| Comprensión del problema y conversación    | 🟡     |
+| Calidad de conversación de voz             | 🔴     |
+| Video                                      | 🔴     |
+| Repositorio, proceso y buenas prácticas    | 🟡     |
+
+---
+
+# 13. Métricas obligatorias
+
+Todavía no están instrumentadas de forma verificable:
+
+| Métrica                        | Estado |
+| ------------------------------ | ------ |
+| Latencia P50                   | 🔴     |
+| Latencia P95                   | 🔴     |
+| Fin de habla → inicio de audio | 🔴     |
+| Input tokens / turno           | 🔴     |
+| Output tokens / turno          | 🔴     |
+| Tokens / llamada               | 🔴     |
+| Invocaciones LLM / turno       | 🔴     |
+| Consultas RAG / llamada        | 🔴     |
+| Costo estimado / llamada       | 🔴     |
+
+Las métricas finales deberán derivarse de logs estructurados.
+
+No deben introducirse valores manuales para aparentar precisión.
+
+---
+
+# 14. Riesgos prioritarios
+
+## Críticos
 
 1. Falso negativo clínico.
-2. Alucinación clínica peligrosa.
+2. Alucinación clínica.
 3. Prompt injection.
-4. Fallo de voz en tiempo real.
-5. Fallo del knowledge vivo.
+4. Voz no funcional.
+5. Knowledge Vivo incompleto.
 6. Levantamiento superior a 15 minutos.
 
-### Altos
+## Altos
 
-7. Métricas inconsistentes con los logs.
-8. Demo diferente al repositorio entregado.
-9. Diagrama que no corresponde al código.
-10. Falta de trazabilidad de fuentes clínicas.
-
----
-
-## 12. Principios de desarrollo
-
-Cada incremento debe producir al menos uno de:
-
-- funcionalidad;
-- prueba;
-- evidencia;
-- métrica;
-- documentación;
-- reducción de riesgo.
-
-No se priorizarán funcionalidades puramente estéticas.
-
-La estética de las superficies no es criterio de puntuación.
+7. Métricas inconsistentes.
+8. Demo diferente al repositorio.
+9. Diagrama desactualizado.
+10. Falta de trazabilidad.
+11. Validación insuficiente sobre dataset.
 
 ---
 
-## 13. Próximo objetivo
+# 15. Estado global
 
-El circuito RAG real y el grounding del LLM ya están implementados:
+## Compuertas
 
-`Consulta → embeddings BGE-M3 → ChromaDB → Evidence → ClinicalPromptBuilder → Gemini`
+```text
+G1 🟡
+G2 🟡
+G3 🟢
+G4 🔴
+G5 🟡
+```
 
-El siguiente objetivo técnico es implementar Knowledge Vivo sobre esta infraestructura:
+## Núcleo técnico
 
-`Documento → ingestión → extracción → chunking → embeddings → ChromaDB → consulta → eliminación → verificación de olvido`
+```text
+Dominio                  🟢
+Application              🟢
+API                      🟢
+LLM                      🟢
+RAG                      🟢
+Grounding                🟢
+Knowledge Ingestion      🟢
+Knowledge Vivo           🟡
+Decisión clínica         🟡
+Voz                      🔴
+Administración           🔴
+Observabilidad           🔴
+Demo                     🔴
+```
 
-Después se integrarán progresivamente:
+---
 
-`Voz → STT → RAG/LLM → TTS`
+# 16. Próximo incremento
 
-junto con observabilidad, métricas obligatorias y consola de administración.
+## INC-004 — Knowledge Vivo
 
-El siguiente incremento técnico prioritario es **INC-004 — Knowledge Vivo**.
+Objetivo:
 
-Cada incremento será validado antes de iniciar el siguiente.
+```text
+Documento
+→ Upload
+→ Extract
+→ Chunk
+→ Index
+→ Query
+→ Evidence
+→ Grounded response
+→ Delete
+→ Verify forgetting
+```
+
+El objetivo es construir la funcionalidad mínima observable requerida por G5.
+
+No se debe rediseñar el RAG existente.
+
+---
+
+# 17. Próximos incrementos
+
+### INC-005
+
+Decisión clínica conectada con evidencia real.
+
+Validar:
+
+* verde;
+* amarillo;
+* rojo;
+* ambigüedad;
+* escalamiento;
+* falsos negativos.
+
+### INC-006
+
+Pipeline de voz:
+
+```text
+STT
+→ Conversation
+→ RAG
+→ Decision
+→ LLM
+→ TTS
+```
+
+### Posteriormente
+
+* interfaz de llamada;
+* consola administrativa;
+* observabilidad;
+* evaluación del dataset;
+* pruebas adversariales;
+* README final;
+* diagrama;
+* informe;
+* video.
+
+---
+
+# 18. Checkpoint de recuperación
+
+Si el desarrollo continúa en otra conversación:
+
+**Fecha:** 2026-08-09
+
+**Commit:**
+
+`94217df feat: integrate clinical knowledge ingestion`
+
+**Tests:**
+
+`69 passed`
+
+**Ruff:**
+
+`All checks passed!`
+
+**Working tree:**
+
+`clean`
+
+**Branch:**
+
+`main`
+
+**Current increment:**
+
+`INC-004 — Knowledge Vivo`
+
+**Next action:**
+
+Construir la ruta completa de Knowledge Vivo sin modificar innecesariamente
+la arquitectura RAG existente.

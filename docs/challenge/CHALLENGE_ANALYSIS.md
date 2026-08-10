@@ -1,628 +1,539 @@
-# CHALLENGE_ANALYSIS.md
+CHALLENGE_ANALYSIS.md
+Tech Sphere Challenge 2026 — Matriz de trazabilidad
 
-# Tech Sphere Challenge 2026 — Matriz de trazabilidad
-
-## 1. Propósito
+1. Propósito
 
 Este documento traduce los requisitos oficiales del reto en elementos concretos de
 implementación, validación y evidencia.
 
 Los documentos oficiales son:
 
-- `docs/rubrica-evaluacion.md`
-- `docs/stack-tecnico.md`
+ParticipantArtifacts/README.md
+ParticipantArtifacts/docs/rubrica-evaluacion.md
+ParticipantArtifacts/docs/stack-tecnico.md
 
-Estos documentos son normativos y **no se modifican**.
+Estos documentos son normativos y no se modifican.
 
 Esta matriz sí se modifica durante el desarrollo porque representa el estado real de
 nuestra implementación.
 
-### Convención de estados
-
-- 🟢 **IMPLEMENTADO**: existe implementación funcional y verificable en el repositorio.
-- 🟡 **PARCIAL**: existe base arquitectónica, contrato o parte funcional, pero todavía
-  falta cerrar el requisito observable.
-- 🔴 **PENDIENTE**: todavía no existe implementación funcional suficiente.
-- ⬜ **NO VALIDADO**: existe implementación, pero aún no se ha ejecutado la prueba
-  correspondiente.
-
----
-
-# 2. Compuertas eliminatorias
-
-| ID | Requisito | Implementación actual | Prueba requerida | Evidencia requerida | Estado |
-|---|---|---|---|---|---|
-| **G1** | 4 entregables completos | Repositorio público + documentación propia en construcción. Diagrama, informe y video aún pendientes. | Checklist final de los 4 entregables | GitHub + diagrama + informe + video | 🟡 |
-| **G2** | Levantamiento ≤15 min | Proyecto Python/FastAPI con `pyproject.toml` y `uv.lock`; procedimiento final todavía no cerrado. | Levantamiento cronometrado siguiendo exclusivamente README | README + logs + tiempo medido | 🟡 |
-| **G3** | Modelo permitido | Google Gemini 1.5 Flash integrado mediante `google-genai`, con adaptador `GeminiLanguageModel` y configuración mediante `GEMINI_API_KEY`. | Verificar modelo contra `docs/stack-tecnico.md` y ejecutar flujo de respuesta | Código + configuración + pruebas + README + informe | 🟢 |
-| **G4** | Voz en tiempo real | Existe `VoiceProvider` como puerto arquitectónico, pero no hay pipeline STT → LLM → TTS funcional. | Saludo + pregunta trivial en llamada real | Demo + logs + video | 🔴 |
-| **G5** | Knowledge vivo | Existe infraestructura RAG funcional con BGE-M3, ChromaDB, indexación, recuperación y evidencia. Todavía no existe el flujo completo de upload → procesamiento → consulta → delete → verificación de olvido. | Documento externo: subir → consultar → eliminar → comprobar olvido | Consola + logs + video | 🔴 |
-
-### Regla operativa
+Convención de estados
+🟢 IMPLEMENTADO: existe implementación funcional y verificable en el repositorio.
+🟡 PARCIAL: existe base arquitectónica, contrato o parte funcional, pero todavía
+falta cerrar el requisito observable.
+🔴 PENDIENTE: todavía no existe implementación funcional suficiente.
+⬜ NO VALIDADO: existe implementación, pero aún no se ha ejecutado la prueba
+correspondiente.
+2. Compuertas eliminatorias
+ID	Requisito	Implementación actual	Prueba requerida	Evidencia requerida	Estado
+G1	4 entregables completos	Repositorio y documentación propia activos. Diagrama, informe y video aún pendientes.	Checklist final	GitHub + diagrama + informe + video	🟡
+G2	Levantamiento ≤15 min	pyproject.toml, uv.lock y dependencias declaradas. Falta prueba cronometrada usando README final.	Levantamiento siguiendo exclusivamente README	README + tiempo medido + logs	🟡
+G3	Modelo permitido	Google Gemini 1.5 Flash integrado mediante google-genai, LanguageModel y GeminiLanguageModel.	Verificación de modelo + ejecución	Código + configuración + pruebas + README + informe	🟢
+G4	Voz en tiempo real	Existe arquitectura preparada, pero todavía no existe pipeline STT → LLM/RAG → TTS funcional.	Saludo + pregunta trivial en llamada real	Demo + logs + video	🔴
+G5	Knowledge vivo	Existe RAG real, indexador, eliminación y servicio de ingestión. Falta upload → procesamiento → consulta → delete → verificación de olvido.	Documento externo: subir → consultar → eliminar → comprobar olvido	Consola + logs + video	🟡
+Regla operativa
 
 Ninguna compuerta se considera superada por la existencia de interfaces, fakes,
-schemas o placeholders. Debe existir una ruta funcional y observable que permita
-ejecutar la prueba definida por la rúbrica.
+schemas o placeholders.
 
----
+Debe existir una ruta funcional y observable que permita ejecutar la prueba
+definida por la rúbrica.
 
-# 3. Estado de implementación actual
+3. Estado de implementación actual
+3.1 Dominio y aplicación
 
-## 3.1 Dominio y aplicación
+Existe una base funcional que incluye:
 
-Actualmente existe una base funcional de dominio y aplicación que incluye:
+ConversationContext
+FollowUpCase
+ClinicalDecision
+ConversationState
+mensajes y turnos;
+observaciones del paciente;
+niveles de riesgo;
+evidencia clínica;
+explicación de decisión;
+resumen clínico;
+recomendaciones;
+eventos de dominio;
+ConversationOrchestrator;
+ClinicalKnowledgeService;
+ClinicalQueryBuilder;
+ClinicalPromptBuilder;
+ClinicalResponseService;
+ClinicalReasoner;
+DecisionEngine;
+RiskAssessmentService;
+SymptomClassifier;
+ConversationAnalysisService;
+SummaryGenerationService;
+StartFollowUpUseCase;
+SendMessageUseCase.
+Estado
 
-- `ConversationContext`
-- `FollowUpCase`
-- `Patient`
-- `ClinicalDecision`
-- estados de conversación
-- mensajes y turnos
-- observaciones del paciente
-- niveles de riesgo
-- evidencia clínica
-- explicación de decisión
-- resumen clínico
-- recomendaciones
-- eventos de dominio
-- `ConversationOrchestrator`
-- `ClinicalKnowledgeService`
-- `ClinicalReasoner`
-- `DecisionEngine`
-- `RiskAssessmentService`
-- `SymptomClassifier`
-- `ConversationAnalysisService`
-- `SummaryGenerationService`
-- `StartFollowUpUseCase`
-- DTOs de inicio y envío de mensajes
-- rutas FastAPI de health y follow-up
-- manejo global de excepciones
+🟢 Base de dominio/aplicación implementada.
 
-### Estado
+Esto no implica que todas las integraciones externas del reto estén terminadas.
 
-🟢 **Base de dominio/aplicación implementada.**
-
-Esto constituye infraestructura de arquitectura, no implica todavía que las
-integraciones externas del reto estén terminadas.
-
----
-
-## 3.2 Puertos y adaptadores
+4. Puertos y adaptadores
 
 Existen contratos para:
 
-- `ConversationRepository`
-- `KnowledgeProvider`
-- `DecisionEngine`
-- `AuditProvider`
-- `LanguageNormalizer`
-- `SummaryProvider`
-- `VoiceProvider`
-- `LanguageModel`
+ConversationRepository
+KnowledgeProvider
+KnowledgeIndexer
+DecisionEngine
+AuditProvider
+LanguageNormalizer
+SummaryProvider
+VoiceProvider
+LanguageModel
 
-También existen fakes para pruebas, incluyendo:
+Existen fakes para pruebas, incluyendo:
 
-- `FakeConversationRepository`
-- `FakeKnowledgeProvider`
-- `FakeLanguageModel`
+FakeConversationRepository
+FakeKnowledgeProvider
+FakeLanguageModel
+Estado
 
-### Estado
+🟡 Arquitectura preparada para integración.
 
-🟡 **Arquitectura preparada para integración.**
-
-Los contratos permiten extender la solución sin rediseñar el dominio, pero la
-rúbrica exige implementaciones reales para las funcionalidades evaluables.
-
----
-
-## 3.3 API
+5. API
 
 Actualmente existe:
 
-- aplicación FastAPI
-- endpoint de health
-- endpoint de inicio de follow-up
-- endpoint de envío de mensajes
-- schemas Pydantic
-- DTOs de aplicación
-- dependency injection
-- exception handler global
+aplicación FastAPI;
+endpoint de health;
+endpoint de inicio de follow-up;
+endpoint de envío de mensajes;
+schemas Pydantic;
+DTOs de aplicación;
+dependency injection;
+exception handler global.
+Estado
 
-### Estado
+🟢 API base implementada y probada.
 
-🟢 **API base implementada y probada.**
+6. RAG y conocimiento clínico
 
----
+La infraestructura RAG real está implementada.
 
-## 3.4 RAG y conocimiento clínico
+6.1 Embeddings
 
-La infraestructura RAG real ya está implementada.
+Existe:
 
-Actualmente existe:
+BGEEmbeddingProvider
 
-1. `BGEEmbeddingProvider` basado en `BAAI/bge-m3`;
-2. `ChromaKnowledgeProvider` basado en ChromaDB persistente;
-3. generación de embeddings normalizados;
-4. indexación de chunks clínicos;
-5. recuperación mediante búsqueda vectorial;
-6. transformación de resultados recuperados en `Evidence`;
-7. factory para construir el proveedor RAG;
-8. pruebas unitarias de embeddings;
-9. pruebas del proveedor ChromaDB;
-10. prueba de integración BGE-M3 → ChromaDB.
+Modelo:
 
-El flujo actualmente validado es:
+BAAI/bge-m3
 
-`texto → BGE-M3 → embedding → ChromaDB → búsqueda → Evidence`
+6.2 Vector store
 
-Todavía debe cerrarse el flujo completo requerido por el reto:
+Existe:
 
-`documento → extracción → chunking → embeddings → ChromaDB → recuperación → evidencia → respuesta fundamentada`
+ChromaKnowledgeProvider
 
-También permanece pendiente el Knowledge Vivo completo:
+Tecnología:
 
-`upload → indexación → consulta → delete → verificación de olvido`
+ChromaDB
 
-### Estado
+6.3 Indexación
 
-🟢 **RAG base y grounding del LLM implementados; ingestión documental y Knowledge Vivo pendientes.**
+Existe:
 
-### Prioridad
+ChromaKnowledgeIndexer
 
-**Máxima**, porque afecta directamente:
+Permite:
 
-- G5;
-- 20 puntos de RAG, precisión clínica y conocimiento vivo;
-- trazabilidad clínica;
-- reducción de alucinaciones.
+indexación de chunks;
+almacenamiento de metadatos;
+eliminación por documento.
+6.4 Recuperación
 
----
+El flujo validado es:
 
-## 3.5 LLM
+texto / consulta
+      ↓
+BGE-M3
+      ↓
+embedding
+      ↓
+ChromaDB
+      ↓
+búsqueda
+      ↓
+Evidence
+6.5 Grounding
 
-Se seleccionó e integró **Google Gemini 1.5 Flash**, uno de los modelos
-permitidos por `docs/stack-tecnico.md`.
+La evidencia recuperada se integra mediante:
 
-La integración se realiza mediante:
+KnowledgeProvider
+      ↓
+ClinicalKnowledgeService
+      ↓
+Evidence
+      ↓
+ClinicalPromptBuilder
+      ↓
+Gemini
+Estado
 
-- puerto de dominio `LanguageModel`;
-- adaptador `GeminiLanguageModel`;
-- SDK oficial `google-genai`;
-- configuración mediante `GEMINI_API_KEY`;
-- `ClinicalPromptBuilder`;
-- `ClinicalResponseService`;
-- integración con `ConversationOrchestrator`;
-- endpoint `/messages`.
+🟢 RAG base y grounding implementados.
 
-El dominio permanece desacoplado del proveedor concreto mediante el puerto
-`LanguageModel`.
+🟡 Validación clínica integral y Knowledge Vivo completo pendientes.
 
-### Validación
+7. Knowledge Vivo
+Implementado
+KnowledgeIndexer;
+ChromaKnowledgeIndexer;
+indexación;
+eliminación por documento;
+ClinicalKnowledgeIngestionService;
+prueba de ingestión;
+prueba de eliminación.
+Flujo actual
+ClinicalKnowledgeIngestionService
+            ↓
+      KnowledgeIndexer
+            ↓
+  ChromaKnowledgeIndexer
+            ↓
+         ChromaDB
+Flujo requerido para G5
+Documento
+   ↓
+Upload
+   ↓
+Extracción
+   ↓
+Chunking
+   ↓
+Ingestión
+   ↓
+Indexación
+   ↓
+Consulta
+   ↓
+Evidence
+   ↓
+Respuesta fundamentada
+   ↓
+Delete
+   ↓
+Verificación de olvido
+Estado
 
-La implementación cuenta con pruebas para:
+🟡 PARCIAL
 
-- contrato del `LanguageModel`;
-- `FakeLanguageModel`;
-- `ClinicalResponseService`;
-- `GeminiLanguageModel`;
-- caso de uso `SendMessageUseCase`;
-- endpoint `/messages`.
+La infraestructura está preparada, pero la funcionalidad observable de extremo a
+extremo todavía no está terminada.
 
-La suite completa fue ejecutada con:
+8. LLM
 
-`uv run python -m pytest -q`
+Modelo:
 
-Resultado:
+Google Gemini 1.5 Flash
 
-`60 passed`
+Integración:
 
-### Estado
+LanguageModel;
+GeminiLanguageModel;
+google-genai;
+GEMINI_API_KEY;
+ClinicalPromptBuilder;
+ClinicalResponseService;
+ConversationOrchestrator.
+Validación
 
-🟢 **LLM real integrado y probado.**
+La suite completa actual:
 
-### Pendiente
+69 passed
+Estado
 
-Todavía falta instrumentar:
+🟢 LLM real integrado y probado.
 
-- tokens de entrada por turno;
-- tokens de salida por turno;
-- invocaciones LLM por turno;
-- costo estimado por llamada;
-- pruebas adversariales de prompt injection.
+Pendiente
+tokens de entrada;
+tokens de salida;
+invocaciones por turno;
+costo;
+métricas por llamada;
+pruebas adversariales;
+evaluación clínica integral.
+9. Voz
 
-La validación clínica integral también permanece pendiente.
+Existe VoiceProvider, pero no existe implementación funcional completa de:
 
----
-
-## 3.6 Voz
-
-Existe `VoiceProvider`, pero todavía no existe implementación funcional de:
-
-```text
 Micrófono
    ↓
 STT
    ↓
-Análisis / RAG / LLM
-   ↓
-Respuesta
+Análisis / RAG / decisión / LLM
    ↓
 TTS
    ↓
-Audio al paciente
-```
+Audio
+Estado
 
-### Estado
+🔴 Voz en tiempo real pendiente.
 
-🔴 **Voz en tiempo real pendiente.**
+Esto afecta directamente G4.
 
-Esto es requisito eliminatorio G4.
+10. Consola de administración
 
----
+La administración funcional todavía no está implementada.
 
-## 3.7 Consola de administración
+Debe permitir como mínimo:
 
-La estructura contiene:
+subir documento;
+procesarlo;
+mostrar documento disponible;
+eliminar documento.
+Estado
 
-`apps/admin/`
+🔴 Pendiente.
 
-pero actualmente no existe una consola funcional que permita:
+La estética no es prioritaria.
 
-- subir documento;
-- listar documentos;
-- mostrar documento procesado/disponible;
-- eliminar documento.
+11. Interfaz de llamada
 
-### Estado
+Todavía no existe una interfaz funcional que permita:
 
-🔴 **Pendiente.**
+iniciar llamada;
+conceder acceso al micrófono;
+hablar con el agente;
+escuchar respuesta.
+Estado
 
-La estética no es prioridad. La prioridad es satisfacer el contrato funcional
-mínimo exigido por el README oficial.
+🔴 Pendiente.
 
----
+12. Criterios de puntuación
+12.1 RAG, precisión clínica y conocimiento vivo — 20 pts
+Implementado
+embeddings;
+ChromaDB;
+indexación;
+recuperación;
+Evidence;
+grounding;
+eliminación de documentos.
+Falta demostrar
+upload dinámico;
+procesamiento documental;
+eliminación end-to-end;
+verificación de olvido;
+abstención ante información desconocida;
+evaluación de alucinación;
+evaluación clínica.
+Estado
 
-## 3.8 Interfaz de llamada
+🟡 Parcial.
 
-La estructura contiene:
-
-`apps/web/`
-
-pero todavía no existe una interfaz funcional que permita:
-
-- iniciar llamada desde navegador;
-- conceder acceso al micrófono;
-- hablar con el agente;
-- escuchar la respuesta.
-
-### Estado
-
-🔴 **Pendiente.**
-
----
-
-# 4. Criterios de puntuación
-
-## 4.1 RAG, precisión clínica y conocimiento vivo — 20 pts
-
-### Objetivos
-
-- Respuestas fundamentadas en el corpus.
-- Trazabilidad de las respuestas.
-- Manejo explícito de información desconocida.
-- Incorporación dinámica de documentos.
-- Eliminación efectiva del conocimiento.
-- Ausencia de alucinación clínica.
-
-### Evidencia requerida
-
-- Logs RAG.
-- Fuentes recuperadas.
-- Documento utilizado.
-- Respuesta generada.
-- Prueba upload/delete.
-- Pruebas de preguntas fuera del corpus.
-
-### Estado
-
-🟢 **RAG y grounding del LLM implementados; validación clínica y Knowledge Vivo pendientes.**
-
----
-
-## 4.2 Lógica de decisión y escalamiento — 20 pts
-
-### Base actualmente disponible
-
-Existe una base de dominio relacionada con:
-
-- `DecisionEngine`
-- `ClinicalReasoner`
-- `RiskAssessmentService`
-- `SymptomClassifier`
-- `ClinicalDecision`
-- `RiskLevel`
-- `DecisionExplanation`
-- eventos de decisión y alerta.
-
-### Falta demostrar
-
-- clasificación correcta de verde/amarillo/rojo;
-- investigación de ambigüedad;
-- política conservadora ante riesgo;
-- escalamiento;
-- persistencia de alertas;
-- resumen final;
-- próximos pasos;
-- comportamiento sobre los casos del dataset.
-
-### Estado
-
-🟡 **Base implementada; validación clínica integral pendiente.**
-
----
-
-## 4.3 Comprensión del problema y diseño de la conversación — 15 pts
-
-### Base disponible
+12.2 Lógica de decisión y escalamiento — 20 pts
 
 Existe:
 
-- estado conversacional;
-- mensajes;
-- turnos;
-- orquestador;
-- análisis conversacional;
-- flujo de conversación.
+DecisionEngine;
+ClinicalReasoner;
+RiskAssessmentService;
+SymptomClassifier;
+ClinicalDecision;
+RiskLevel;
+DecisionExplanation.
 
-### Falta demostrar
+Falta demostrar:
 
-- apertura de llamada;
-- recolección progresiva de síntomas;
-- manejo de respuestas evasivas;
-- manejo de interrupciones;
-- instrucciones largas adaptadas a voz;
-- cierre;
-- correspondencia entre diagrama, implementación y comportamiento real.
+clasificación correcta verde/amarillo/rojo;
+manejo de ambigüedad;
+política conservadora;
+escalamiento;
+persistencia de alertas;
+resumen final;
+próximos pasos;
+validación contra dataset.
+Estado
 
-### Estado
+🟡 Base implementada; validación integral pendiente.
 
-🟡 **Base implementada; conversación evaluable pendiente.**
+12.3 Comprensión del problema y conversación — 15 pts
 
----
+Existe:
 
-## 4.4 Calidad de la conversación de voz — 15 pts
+estado conversacional;
+mensajes;
+turnos;
+orquestador;
+análisis conversacional;
+flujo de conversación.
 
-### Requisitos
+Falta demostrar:
 
-- tono apropiado;
-- respuestas concisas;
-- latencia;
-- manejo de silencios;
-- interrupciones;
-- audio degradado;
-- regionalismos colombianos;
-- paciente hostil/asustado;
-- prompt injection;
-- solicitudes fuera de misión.
+apertura de llamada;
+recolección progresiva;
+respuestas evasivas;
+interrupciones;
+instrucciones largas adaptadas a voz;
+cierre;
+correspondencia entre diagrama, implementación y demo.
+Estado
 
-### Métricas
+🟡 Base implementada; comportamiento evaluable pendiente.
 
-- P50;
-- P95;
-- latencia por turno.
+12.4 Calidad de conversación de voz — 15 pts
 
-### Estado
+Pendiente:
 
-🔴 **Pendiente de integración de voz y observabilidad.**
+tono;
+concisión;
+latencia;
+silencios;
+interrupciones;
+audio degradado;
+regionalismos colombianos;
+paciente hostil/asustado;
+prompt injection;
+solicitudes fuera de misión.
+Estado
 
----
+🔴 Pendiente de voz y observabilidad.
 
-## 4.5 Video de argumentación y demo — 15 pts
+12.5 Video de argumentación y demo — 15 pts
 
-### Debe demostrar
+Debe demostrar:
 
-- funcionamiento real;
-- correspondencia con el repositorio;
-- flujo de demo;
-- respuesta a pregunta 1;
-- respuesta a pregunta 2.
+funcionamiento real;
+correspondencia con repositorio;
+flujo de demo;
+preguntas requeridas;
+evidencia observable.
+Estado
 
-### Estado
+🔴 Pendiente.
 
-🔴 **Pendiente.**
+12.6 Repositorio, proceso y buenas prácticas — 15 pts
+Disponible
+repositorio Git;
+commits incrementales;
+dependencias declaradas;
+arquitectura;
+pruebas;
+Ruff;
+documentación propia;
+trazabilidad.
+Falta
+README final reproducible;
+prueba ≤15 minutos;
+métricas;
+logs;
+documentación de prompts;
+diagrama final;
+informe;
+video.
+Estado
 
----
+🟡 Base sólida; evidencia final pendiente.
 
-## 4.6 Repositorio, proceso y buenas prácticas — 15 pts
+13. Métricas obligatorias
+Métrica	Fuente	Estado
+Latencia P50	Logs	🔴
+Latencia P95	Logs	🔴
+Fin de habla → audio	Voz	🔴
+Input tokens / turno	LLM	🔴
+Output tokens / turno	LLM	🔴
+Tokens / llamada	LLM	🔴
+Invocaciones LLM / turno	LLM	🔴
+Consultas RAG / llamada	RAG	🔴
+Costo / llamada	Métricas + precios	🔴
 
-### Base disponible
+Las métricas deben proceder de logs estructurados.
 
-- repositorio Git activo;
-- historial de commits;
-- dependencias declaradas;
-- arquitectura documentada;
-- pruebas automatizadas;
-- Ruff;
-- documentación propia de continuidad.
+14. Dataset y evaluación
 
-### Falta
+El reto proporciona datasets y corpus clínico.
 
-- README final reproducible;
-- métricas;
-- logs verificables;
-- documentación de prompts;
-- evolución de decisiones;
-- informe final;
-- diagrama final;
-- coherencia demostrable entre código, documentación y demo.
+La evaluación debe utilizarse para:
 
-### Estado
+reconstruir casos;
+probar extracción de síntomas;
+evaluar decisiones;
+comparar contra label_ground_truth;
+identificar falsos negativos;
+validar comportamiento conservador;
+evaluar grounding;
+generar evidencia reproducible.
+Estado
 
-🟡 **Base sólida; evidencia final pendiente.**
+🟡 Pendiente de ejecución sistemática.
 
----
-
-# 5. Métricas obligatorias
-
-| Métrica | Fuente | Instrumentación | Estado |
-|---|---|---|---|
-| Latencia P50 | Logs | Middleware/instrumentación de turnos | 🔴 |
-| Latencia P95 | Logs | Middleware/instrumentación de turnos | 🔴 |
-| Input tokens/turno | LLM | Captura de usage del proveedor | 🔴 |
-| Output tokens/turno | LLM | Captura de usage del proveedor | 🔴 |
-| Tokens/llamada | LLM | Agregación por conversation/call ID | 🔴 |
-| Invocaciones LLM/turno | LLM | Contador por turno | 🔴 |
-| Consultas RAG/llamada | RAG | Contador por llamada | 🔴 |
-| Costo/llamada | Métricas + precios | Cálculo documentado | 🔴 |
-
-### Regla
-
-No se registrarán métricas manualmente para aparentar precisión.
-
-Las métricas finales deben derivarse de logs estructurados y ser contrastables con
-la sesión de evaluación.
-
----
-
-# 6. Dataset y evaluación
-
-El reto proporciona:
-
-- `dataset_final.xlsx`
-- `trayectorias_postop_silver.xlsx`
-- `perfiles_clinicos_pacientes_silver_contest.xlsx`
-- `perfiles_pacientes_co.xlsx`
-- `dataset/textos/`
-
-Características relevantes:
-
-- 40 pacientes;
-- 160 casos;
-- 3 niveles de criticidad: verde, amarillo y rojo;
-- conversaciones en dos capas;
-- capa limpia;
-- capa ruidosa;
-- corpus clínico de 107 documentos;
-- material de evaluación adicional no incluido en el corpus entregado.
-
-### Implicación
-
-El dataset no debe utilizarse únicamente como conjunto de ejemplos de desarrollo.
-Debe servir para:
-
-1. reconstruir casos;
-2. probar extracción de síntomas;
-3. evaluar decisiones;
-4. comparar comportamiento contra `label_ground_truth`;
-5. identificar falsos negativos;
-6. generar evidencia reproducible.
-
----
-
-# 7. Riesgos críticos
-
-| Riesgo | Severidad | Mitigación | Evidencia | Estado |
-|---|---|---|---|---|
-| Falso negativo clínico | Crítica | Política conservadora de escalamiento + pruebas | Casos rojo/ambiguos | 🔴 |
-| Alucinación clínica | Crítica | RAG + límites explícitos + abstención | Evaluaciones | 🔴 |
-| Prompt injection | Crítica | Separación de instrucciones + validación | Pruebas adversariales | 🔴 |
-| Métricas inconsistentes | Alta | Logs estructurados | Logs | 🔴 |
-| Demo ≠ repositorio | Alta | Build reproducible + commit/tag | Release | 🟡 |
-| Levantamiento >15 min | Crítica | README + automatización | Prueba cronometrada | 🟡 |
-
----
-
-# 8. Estrategia de incremento
+15. Riesgos críticos
+Riesgo	Severidad	Mitigación	Estado
+Falso negativo clínico	Crítica	Política conservadora + pruebas	🔴
+Alucinación clínica	Crítica	RAG + abstención + evaluación	🔴
+Prompt injection	Crítica	Separación de instrucciones + pruebas	🔴
+Voz no funcional	Crítica	STT/TTS + pruebas reales	🔴
+Knowledge Vivo incompleto	Crítica	Flujo upload/delete/verificación	🟡
+Levantamiento >15 min	Crítica	README + prueba cronometrada	🟡
+Métricas inconsistentes	Alta	Logs estructurados	🔴
+Demo ≠ repositorio	Alta	Commit/tag final	🟡
+Diagrama desactualizado	Alta	Diagrama desde arquitectura real	🟡
+Falta de trazabilidad	Alta	Evidence + logs	🟡
+16. Estrategia incremental
 
 Cada incremento debe producir al menos uno de:
 
-- funcionalidad;
-- prueba;
-- evidencia;
-- métrica;
-- documentación;
-- reducción de riesgo.
+funcionalidad;
+prueba;
+evidencia;
+métrica;
+documentación;
+reducción de riesgo.
 
 No se priorizan funcionalidades puramente estéticas.
 
-### Orden de prioridad actual
+17. Prioridad actual
+Cerrar Knowledge Vivo.
+Validar grounding clínico.
+Conectar decisión clínica con evidencia real.
+Implementar STT → LLM/RAG → TTS.
+Construir interfaz mínima de llamada.
+Construir consola administrativa mínima.
+Instrumentar métricas.
+Evaluar dataset y escenarios adversariales.
+Cerrar README ≤15 minutos.
+Preparar diagrama, informe y video.
+18. Estado global
+Compuertas
+G1 🟡
+G2 🟡
+G3 🟢
+G4 🔴
+G5 🟡
+Núcleo
+RAG                     🟢
+LLM                     🟢
+Grounding               🟢
+Knowledge Ingestion     🟢
+Knowledge Vivo          🟡
+Decisión clínica        🟡
+Conversación            🟡
+Voz                     🔴
+Administración          🔴
+Observabilidad          🔴
+Demo                    🔴
+19. Próximo incremento
 
-1. **Cerrar integración y grounding del RAG existente.**
-2. **Implementar knowledge vivo.**
-3. **Conectar decisión clínica con evidencia real.**
-4. **Implementar STT/LLM/TTS.**
-5. **Construir interfaz de llamada mínima.**
-6. **Construir consola administrativa mínima.**
-7. **Instrumentar métricas obligatorias.**
-8. **Validar dataset y escenarios adversariales.**
-9. **Cerrar README ≤15 minutos.**
-10. **Preparar diagrama, informe y video.**
+INC-004 — Knowledge Vivo
 
----
+Debe cerrarse con una funcionalidad observable:
 
-# 9. Estado global
+upload
+→ extraction
+→ chunking
+→ indexing
+→ query
+→ grounded response
+→ delete
+→ forgetting verification
 
-## Compuertas
-
-- G1 🟡
-- G2 🟡
-- G3 🟢
-- G4 🔴
-- G5 🔴
-
-## Núcleo de puntuación
-
-- RAG 🟢
-- LLM 🟢
-- Decisión clínica 🟡
-- Conversación 🟡
-- Voz 🔴
-- Video 🔴
-- Repositorio/proceso 🟡
-
-## Observabilidad
-
-- Latencia 🔴
-- Tokens 🔴
-- Invocaciones 🔴
-- RAG 🔴
-- Costos 🔴
-
----
-
-### INC-001 — Selección del modelo y diseño de integración RAG
-
-1. Modelo permitido seleccionado: 🟢 **Google Gemini 1.5 Flash**
-2. Justificación técnica de la elección: 🟢 **Documentada en PROJECT_JOURNAL.md**
-3. Proveedor y mecanismo de inferencia: 🟢 **API oficial de Google AI Studio mediante `google-genai`**
-4. Estrategia de embeddings: 🟢 **text-embedding-004**
-5. Almacenamiento vectorial: 🟢 **ChromaDB (Embebido / Local)**
-6. Estrategia de chunking: 🟢 **300-500 tokens con 50 de overlap basado en estructuras clínicas**
-7. Contrato de recuperación: 🟢 **Vinculado a KnowledgeProvider**
-8. Formato de evidencia: 🟢 **Estructura de evidencia con ID de documento y fuente**
-9. Estrategia de actualización y eliminación: 🟢 **Definida para la infraestructura RAG**
-10. Puntos de instrumentación para métricas: 🟢 **Definidos para tokens e invocaciones**
-
-**Estado del diseño:** 🟢 **COMPLETADO**
-
-### INC-002 — Integración del LLM Gemini
-
-1. Modelo implementado: 🟢 **Google Gemini 1.5 Flash**
-2. Adaptador de infraestructura: 🟢 **`GeminiLanguageModel`**
-3. Puerto desacoplado: 🟢 **`LanguageModel`**
-4. Servicio de respuesta clínica: 🟢 **`ClinicalResponseService`**
-5. Constructor de prompts: 🟢 **`ClinicalPromptBuilder`**
-6. Integración con orquestador: 🟢 **`ConversationOrchestrator`**
-7. Endpoint de mensajes: 🟢 **`POST /messages`**
-8. Fake para pruebas: 🟢 **`FakeLanguageModel`**
-9. Suite automatizada: 🟢 **60 tests pasando**
-
-**Estado del incremento:** 🟢 **IMPLEMENTADO Y VALIDADO**
-
-### Pendiente para los siguientes incrementos
-
-- RAG real completo.
-- Knowledge vivo.
-- Instrumentación de tokens, invocaciones y costos.
-- Voz en tiempo real.
-
+No marcar G5 como superada hasta demostrar el flujo completo.
