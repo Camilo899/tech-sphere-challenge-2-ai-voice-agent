@@ -1,11 +1,12 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from app.presentation.api.exception_handlers import (
     register_exception_handlers,
 )
-from app.presentation.api.router import (
-    router,
-)
+from app.presentation.api.router import router
+
+load_dotenv()
 
 app = FastAPI(
     title="Clinical AI Voice Agent",

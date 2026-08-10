@@ -14,7 +14,7 @@ class GeminiLanguageModel(LanguageModel):
     def __init__(
         self,
         *,
-        model: str = "gemini-1.5-flash",
+        model: str = "gemini-3.5-flash",
         api_key: str | None = None,
     ) -> None:
         self._model = model

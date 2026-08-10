@@ -27,3 +27,4 @@ def test_build_includes_patient_message_and_evidence() -> None:
     assert "postoperative-follow-up" in prompt
     assert "chunk-001" in prompt
     assert "0.950" in prompt
+    assert ("La fiebre después de una cirugía puede requerir valoración clínica."in prompt)

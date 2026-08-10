@@ -18,7 +18,8 @@ class ClinicalPromptBuilder:
                 f"- Documento: {item.document_name}; "
                 f"sección: {item.section}; "
                 f"fragmento: {item.chunk_id}; "
-                f"relevancia: {item.score:.3f}"
+                f"relevancia: {item.score:.3f}\n"
+                f"Texto: {item.text}"
             )
             for item in evidence
         )

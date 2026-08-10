@@ -39,6 +39,6 @@ def test_gemini_language_model_generates_response() -> None:
     assert result.evidence_used == ()
 
     fake_client.models.generate_content.assert_called_once_with(
-        model="gemini-1.5-flash",
+        model="gemini-3.5-flash",
         contents="Paciente con fiebre.",
     )
