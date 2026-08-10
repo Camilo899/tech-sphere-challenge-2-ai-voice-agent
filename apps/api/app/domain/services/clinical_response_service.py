@@ -24,6 +24,15 @@ class ClinicalResponseService:
         patient_message: str,
         evidence: list[Evidence],
     ) -> LLMResponse:
+        if not evidence:
+            return LLMResponse(
+                content=(
+                    "No se encontró evidencia clínica suficiente "
+                    "para responder de forma segura."
+                ),
+                evidence_used=(),
+            )
+
         prompt = self._prompt_builder.build(
             patient_message=patient_message,
             evidence=evidence,

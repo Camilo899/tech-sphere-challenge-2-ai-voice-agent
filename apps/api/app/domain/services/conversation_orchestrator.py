@@ -10,6 +10,9 @@ from app.domain.services.clinical_query_builder import (
 from app.domain.services.clinical_response_service import (
     ClinicalResponseService,
 )
+from app.domain.services.conversation_analysis_service import (
+    ConversationAnalysisService,
+)
 from app.domain.services.conversation_flow import (
     ConversationFlow,
 )
@@ -34,12 +37,20 @@ class ConversationOrchestrator:
         knowledge_service: ClinicalKnowledgeService,
         clinical_query_builder: ClinicalQueryBuilder,
         clinical_response_service: ClinicalResponseService | None = None,
+        conversation_analysis_service: (
+            ConversationAnalysisService | None
+        ) = None,
     ) -> None:
         self._decision_engine = decision_engine
         self._conversation_flow = conversation_flow
         self._knowledge_service = knowledge_service
         self._clinical_query_builder = clinical_query_builder
         self._clinical_response_service = clinical_response_service
+        self._conversation_analysis_service = (
+            conversation_analysis_service
+            if conversation_analysis_service is not None
+            else ConversationAnalysisService()
+        )
 
     def process(
         self,
@@ -47,6 +58,20 @@ class ConversationOrchestrator:
         message: ConversationMessage,
     ) -> ConversationContext:
         context.add_message(message)
+
+        symptoms = self._conversation_analysis_service.extract_symptoms(
+            message.content,
+        )
+
+        context.symptoms = symptoms
+
+        risk_level = self._conversation_analysis_service.assess_risk(
+            symptoms,
+        )
+
+        context.clinical_decision = self._decision_engine.decide(
+            risk_level,
+        )
 
         query = self._clinical_query_builder.build(context)
 
@@ -69,12 +94,6 @@ class ConversationOrchestrator:
                     timestamp=message.timestamp,
                 ),
             )
-
-        decision = self._decision_engine.decide_from_context(
-            context,
-        )
-
-        context.clinical_decision = decision
 
         context.current_state = self._conversation_flow.next_state(
             context.current_state,

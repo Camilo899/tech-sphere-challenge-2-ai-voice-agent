@@ -1,8 +1,6 @@
 from typing import ClassVar
 
-from app.domain.value_objects.risk_level import (
-    RiskLevel,
-)
+from app.domain.value_objects.risk_level import RiskLevel
 
 
 class SymptomClassifier:
@@ -23,6 +21,14 @@ class SymptomClassifier:
         "inflamación",
         "enrojecimiento",
     }
+
+    @property
+    def high_risk_symptoms(self) -> set[str]:
+        return self._HIGH_RISK.copy()
+
+    @property
+    def medium_risk_symptoms(self) -> set[str]:
+        return self._MEDIUM_RISK.copy()
 
     def classify(
         self,

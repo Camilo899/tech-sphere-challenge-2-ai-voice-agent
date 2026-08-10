@@ -45,4 +45,6 @@ def send_message(
     return SendMessageResponseSchema(
         response=result.response,
         current_state=result.current_state,
+        #risk_level=result.risk_level,
+        clinical_decision=result.clinical_decision,
     )

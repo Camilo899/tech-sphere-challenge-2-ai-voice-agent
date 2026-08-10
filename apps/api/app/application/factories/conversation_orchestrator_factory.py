@@ -14,6 +14,9 @@ from app.domain.services.clinical_query_builder import (
 from app.domain.services.clinical_response_service import (
     ClinicalResponseService,
 )
+from app.domain.services.conversation_analysis_service import (
+    ConversationAnalysisService,
+)
 from app.domain.services.conversation_flow import (
     ConversationFlow,
 )
@@ -59,4 +62,5 @@ def create_conversation_orchestrator(
         knowledge_service=knowledge_service,
         clinical_query_builder=ClinicalQueryBuilder(),
         clinical_response_service=clinical_response_service,
+        conversation_analysis_service=ConversationAnalysisService(),
     )

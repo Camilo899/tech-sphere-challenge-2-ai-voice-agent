@@ -67,4 +67,5 @@ class SendVoiceMessageUseCase:
         return SendMessageResponse(
             response=assistant_response,
             current_state=updated_context.current_state.value,
+            clinical_decision=updated_context.clinical_decision.value,
         )

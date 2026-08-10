@@ -70,3 +70,36 @@ def test_orchestrator_processes_message() -> None:
     assert knowledge_provider.last_query == "fiebre"
     
     assert "Tengo fiebre desde ayer." in language_model.last_prompt
+
+def test_orchestrator_escalates_high_risk_symptom() -> None:
+    language_model = FakeLanguageModel()
+    knowledge_provider = FakeKnowledgeProvider()
+
+    orchestrator = create_conversation_orchestrator(
+        knowledge_provider=knowledge_provider,
+        language_model=language_model,
+    )
+
+    context = ConversationContext(
+        conversation_id="conv-high-risk",
+        current_state=ConversationState.SYMPTOM_COLLECTION,
+        clinical_decision=ClinicalDecision.CONTINUE,
+    )
+
+    message = ConversationMessage(
+        speaker="patient",
+        content="Tengo fiebre desde ayer después de la cirugía.",
+        timestamp=datetime.now(UTC),
+    )
+
+    updated = orchestrator.process(
+        context=context,
+        message=message,
+    )
+
+    assert "fiebre" in updated.symptoms
+
+    assert (
+        updated.clinical_decision
+        is ClinicalDecision.ESCALATE
+    )

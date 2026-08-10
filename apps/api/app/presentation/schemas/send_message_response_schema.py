@@ -8,5 +8,5 @@ class SendMessageResponseSchema(BaseModel):
     """
 
     response: str
-
     current_state: str
+    clinical_decision: str
