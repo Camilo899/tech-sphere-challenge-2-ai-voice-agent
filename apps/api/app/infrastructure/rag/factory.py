@@ -25,9 +25,11 @@ def create_chroma_knowledge_provider() -> ChromaKnowledgeProvider:
     )
 
 
-def create_chroma_knowledge_stack() -> RAGStack:
-    path = "./chroma"
-    collection_name = "clinical_knowledge"
+def create_chroma_knowledge_stack(
+    *,
+    path: str = "./chroma",
+    collection_name: str = "clinical_knowledge",
+) -> RAGStack:
     embedding_provider = BGEEmbeddingProvider()
 
     provider = ChromaKnowledgeProvider(
