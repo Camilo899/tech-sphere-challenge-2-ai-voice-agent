@@ -23,6 +23,7 @@ def test_generate_response_uses_retrieved_evidence() -> None:
             document_name="postoperative-guide.pdf",
             section="Fever",
             chunk_id="chunk-001",
+            text="Postoperative fever may require clinical evaluation.",
             score=0.95,
         ),
     ]

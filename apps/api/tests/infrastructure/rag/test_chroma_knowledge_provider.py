@@ -1,6 +1,9 @@
 from app.infrastructure.rag.bge_embedding_provider import (
     BGEEmbeddingProvider,
 )
+from app.infrastructure.rag.chroma_knowledge_indexer import (
+    ChromaKnowledgeIndexer,
+)
 from app.infrastructure.rag.chroma_knowledge_provider import (
     ChromaKnowledgeProvider,
 )
@@ -13,19 +16,24 @@ def test_bge_embedding_provider_works_with_chroma(
         model=FakeEmbeddingModel(),
     )
 
+    indexer = ChromaKnowledgeIndexer(
+        path=str(tmp_path / "chroma"),
+        embedding_provider=embedding_provider,
+    )
+
     provider = ChromaKnowledgeProvider(
         path=str(tmp_path / "chroma"),
         embedding_provider=embedding_provider,
     )
 
-    provider.index(
+    indexer.index(
         document_name="clinical-guide",
         section="postoperative-follow-up",
         chunk_id="chunk-001",
         text="La fiebre después de una cirugía puede requerir valoración clínica.",
     )
 
-    provider.index(
+    indexer.index(
         document_name="clinical-guide",
         section="postoperative-follow-up",
         chunk_id="chunk-002",
@@ -41,6 +49,7 @@ def test_bge_embedding_provider_works_with_chroma(
     assert evidence[0].section == "postoperative-follow-up"
     assert evidence[0].chunk_id == "chunk-001"
 
+
 def fake_embedding(text: str) -> list[float]:
     normalized = text.lower()
 
@@ -53,20 +62,27 @@ def fake_embedding(text: str) -> list[float]:
     return [0.0, 0.0, 1.0]
 
 
-def test_retrieve_returns_most_relevant_clinical_evidence(tmp_path):
+def test_retrieve_returns_most_relevant_clinical_evidence(
+    tmp_path,
+):
+    indexer = ChromaKnowledgeIndexer(
+        path=str(tmp_path / "chroma"),
+        embedding_provider=fake_embedding,
+    )
+
     provider = ChromaKnowledgeProvider(
         path=str(tmp_path / "chroma"),
         embedding_provider=fake_embedding,
     )
 
-    provider.index(
+    indexer.index(
         document_name="clinical-guide",
         section="postoperative-follow-up",
         chunk_id="chunk-001",
         text="La fiebre después de una cirugía puede requerir valoración clínica.",
     )
 
-    provider.index(
+    indexer.index(
         document_name="clinical-guide",
         section="postoperative-follow-up",
         chunk_id="chunk-002",
@@ -83,7 +99,8 @@ def test_retrieve_returns_most_relevant_clinical_evidence(tmp_path):
     assert evidence[0].section == "postoperative-follow-up"
     assert evidence[0].chunk_id == "chunk-001"
     assert 0.0 <= evidence[0].score <= 1.0
-    
+
+
 class FakeEmbeddingModel:
     def encode(
         self,

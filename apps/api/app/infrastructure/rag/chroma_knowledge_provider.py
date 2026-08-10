@@ -16,6 +16,7 @@ class ChromaKnowledgeProvider(KnowledgeProvider):
         path: str = "./chroma",
         collection_name: str = "clinical_knowledge",
         embedding_provider: EmbeddingProvider,
+        n_results: int = 1,
     ) -> None:
         self._embedding_provider = embedding_provider
         self._client = chromadb.PersistentClient(path=path)
@@ -23,28 +24,7 @@ class ChromaKnowledgeProvider(KnowledgeProvider):
             name=collection_name,
             metadata={"hnsw:space": "cosine"},
         )
-
-    def index(
-        self,
-        *,
-        document_name: str,
-        section: str,
-        chunk_id: str,
-        text: str,
-    ) -> None:
-        embedding = self._embedding_provider(text)
-
-        self._collection.upsert(
-            ids=[chunk_id],
-            documents=[text],
-            embeddings=[embedding],
-            metadatas=[
-                {
-                    "document_name": document_name,
-                    "section": section,
-                }
-            ],
-        )
+        self._n_results = n_results
 
     def retrieve(
         self,
@@ -54,7 +34,7 @@ class ChromaKnowledgeProvider(KnowledgeProvider):
 
         result = self._collection.query(
             query_embeddings=[query_embedding],
-            n_results=1,
+            n_results=self._n_results,
         )
 
         documents = cast(
@@ -82,7 +62,11 @@ class ChromaKnowledgeProvider(KnowledgeProvider):
                 document_name=str(metadata["document_name"]),
                 section=str(metadata["section"]),
                 chunk_id=str(chunk_id),
-                score=max(0.0, min(1.0, 1.0 - float(distance))),
+                text=document,
+                score=max(
+                    0.0,
+                    min(1.0, 1.0 - float(distance)),
+                ),
             )
             for document, metadata, chunk_id, distance in zip(
                 documents,

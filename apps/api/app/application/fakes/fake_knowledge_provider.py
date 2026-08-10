@@ -26,6 +26,7 @@ class FakeKnowledgeProvider(KnowledgeProvider):
                 document_name="clinical-guide",
                 section="postoperative-follow-up",
                 chunk_id="chunk-001",
+                text="La fiebre después de una cirugía puede requerir valoración clínica.",
                 score=0.95,
             ),
         ]
