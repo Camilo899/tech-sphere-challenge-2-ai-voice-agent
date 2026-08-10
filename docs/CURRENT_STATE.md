@@ -101,12 +101,12 @@ uv run python -m pytest
 Resultado:
 
 ```text
-69 passed in 77.92s
+77 passed in 52.81s
 ```
 
 Estado:
 
-🟢 **69/69 pruebas pasando.**
+🟢 **77/77 pruebas pasando.**
 
 ---
 
@@ -665,7 +665,7 @@ Si el desarrollo continúa en otra conversación:
 
 **Tests:**
 
-`69 passed`
+`77 passed`
 
 **Ruff:**
 

@@ -248,7 +248,7 @@ Validación
 
 La suite completa actual:
 
-69 passed
+77 passed
 Estado
 
 🟢 LLM real integrado y probado.

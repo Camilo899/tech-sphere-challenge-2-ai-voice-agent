@@ -489,3 +489,66 @@ pendiente;
 validado.
 
 No declarar una compuerta como superada únicamente por la existencia de código.
+2026-08-10 — CHECKPOINT DE CONTINUIDAD OPERATIVA
+Contexto
+
+El proyecto se encuentra cerca de la entrega y el historial del chat puede alcanzar
+el límite de contexto antes de terminar el reto.
+
+Decisión
+
+La continuidad deja de depender del historial conversacional y pasa a estar
+respaldada por documentación versionada dentro del repositorio.
+
+Se establece:
+
+- `docs/CONTINUITY_CHECKPOINT.md` como punto de entrada rápido;
+- `docs/CURRENT_STATE.md` como estado técnico consolidado;
+- `docs/PROJECT_JOURNAL.md` como historial de decisiones e incrementos;
+- `docs/challenge/CHALLENGE_ANALYSIS.md` como matriz de requisitos y evidencia;
+- `docs/AI_CONTEXT.md` como contexto estable del proyecto.
+
+Última validación conocida
+
+```text
+uv run pytest -q
+77 passed in 52.81s
+```
+
+Git:
+
+```text
+git status
+nothing to commit, working tree clean
+```
+
+Razón
+
+Si el chat cambia o alcanza su límite, un nuevo chat puede recuperar el estado
+leyendo estos documentos y verificando el repositorio, sin depender de recordar
+la conversación completa.
+
+Regla
+
+Toda decisión relevante de aquí en adelante debe quedar reflejada en el journal
+y toda modificación de estado debe actualizar `CURRENT_STATE.md` y, cuando
+corresponda, `CHALLENGE_ANALYSIS.md`.
+
+2026-08-10 — Estado de RAG y Knowledge Vivo
+
+Validado:
+
+- BGE-M3 como proveedor de embeddings;
+- ChromaDB como vector store;
+- `ChromaKnowledgeIndexer`;
+- `ChromaKnowledgeProvider`;
+- `RAGStack` con embedding provider compartido;
+- ingestión de chunks mediante `ClinicalKnowledgeIngestionService`;
+- eliminación por documento;
+- recuperación de `Evidence`;
+- pruebas de integración indexer → provider.
+
+Estado de requisito
+
+La base RAG está implementada, pero Knowledge Vivo todavía requiere una ruta
+observable completa de documento externo hasta eliminación y verificación de olvido.

@@ -114,13 +114,13 @@ Tests:
 
 ```text
 uv run python -m pytest
-69 passed
+77 passed
 ```
 
 Última ejecución conocida:
 
 ```text
-69 passed in 77.92s
+77 passed in 52.81s
 ```
 
 No existe actualmente una falla conocida de Ruff o Pytest en el checkpoint.
@@ -707,7 +707,7 @@ contexto inicial:
 
 **Tests:**
 
-`69 passed`
+`77 passed`
 
 **Lint:**
 
