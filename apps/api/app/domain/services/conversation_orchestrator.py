@@ -4,6 +4,9 @@ from app.domain.entities.conversation_context import (
 from app.domain.services.clinical_knowledge_service import (
     ClinicalKnowledgeService,
 )
+from app.domain.services.clinical_query_builder import (
+    ClinicalQueryBuilder,
+)
 from app.domain.services.clinical_response_service import (
     ClinicalResponseService,
 )
@@ -29,11 +32,13 @@ class ConversationOrchestrator:
         decision_engine: DecisionEngine,
         conversation_flow: ConversationFlow,
         knowledge_service: ClinicalKnowledgeService,
+        clinical_query_builder: ClinicalQueryBuilder,
         clinical_response_service: ClinicalResponseService | None = None,
     ) -> None:
         self._decision_engine = decision_engine
         self._conversation_flow = conversation_flow
         self._knowledge_service = knowledge_service
+        self._clinical_query_builder = clinical_query_builder
         self._clinical_response_service = clinical_response_service
 
     def process(
@@ -43,8 +48,10 @@ class ConversationOrchestrator:
     ) -> ConversationContext:
         context.add_message(message)
 
+        query = self._clinical_query_builder.build(context)
+
         evidence = self._knowledge_service.retrieve_evidence(
-            message.content,
+            query,
         )
 
         if self._clinical_response_service is not None:
@@ -63,18 +70,14 @@ class ConversationOrchestrator:
                 ),
             )
 
-        decision = (
-            self._decision_engine.decide_from_context(
-                context,
-            )
+        decision = self._decision_engine.decide_from_context(
+            context,
         )
 
         context.clinical_decision = decision
 
-        context.current_state = (
-            self._conversation_flow.next_state(
-                context.current_state,
-            )
+        context.current_state = self._conversation_flow.next_state(
+            context.current_state,
         )
 
         return context

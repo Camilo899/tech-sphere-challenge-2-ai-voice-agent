@@ -11,10 +11,16 @@ class FakeKnowledgeProvider(KnowledgeProvider):
     Test double for the KnowledgeProvider port.
     """
 
+    def __init__(self) -> None:
+        self.last_query: str | None = None
+
     def retrieve(
         self,
         query: str,
     ) -> list[Evidence]:
+        self.last_query = query
+        
+
         return [
             Evidence(
                 document_name="clinical-guide",

@@ -16,10 +16,12 @@ from app.domain.value_objects.conversation_state import ConversationState
 def test_orchestrator_processes_message() -> None:
     language_model = FakeLanguageModel()
 
+    knowledge_provider = FakeKnowledgeProvider()
+
     orchestrator = create_conversation_orchestrator(
-        knowledge_provider=FakeKnowledgeProvider(),
+        knowledge_provider=knowledge_provider,
         language_model=language_model,
-    )
+)
 
     context = ConversationContext(
         conversation_id="conv-001",
@@ -64,7 +66,7 @@ def test_orchestrator_processes_message() -> None:
     assert len(updated.evidences) == 1
 
     assert updated.evidences[0].chunk_id == "chunk-001"
-
-    assert language_model.last_prompt is not None
-
+    
+    assert knowledge_provider.last_query == "fiebre"
+    
     assert "Tengo fiebre desde ayer." in language_model.last_prompt
