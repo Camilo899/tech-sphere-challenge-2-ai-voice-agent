@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from app.application.dtos.send_message_response import SendMessageResponse
 from app.application.ports.conversation_repository import (
     ConversationRepository,
@@ -7,8 +8,6 @@ from app.domain.services.conversation_orchestrator import (
     ConversationOrchestrator,
 )
 from app.domain.value_objects.conversation_message import ConversationMessage
-from datetime import UTC, datetime
-
 
 class SendVoiceMessageUseCase:
     """
