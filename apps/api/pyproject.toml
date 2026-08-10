@@ -19,6 +19,7 @@ dependencies = [
     "google-genai>=2.17.0",
     "httpx2>=2.9.1",
     "pydantic",
+    "python-multipart>=0.0.32",
     "sentence-transformers>=5.7.0",
     "uvicorn",
 ]
