@@ -21,7 +21,7 @@ from app.domain.services.decision_engine import (
     DecisionEngine,
 )
 from app.infrastructure.rag.factory import (
-    create_chroma_knowledge_provider,
+    create_chroma_knowledge_stack,
 )
 
 
@@ -35,7 +35,7 @@ def create_conversation_orchestrator(
     provider = (
         knowledge_provider
         if knowledge_provider is not None
-        else create_chroma_knowledge_provider()
+        else create_chroma_knowledge_stack().provider
     )
 
     knowledge_service = ClinicalKnowledgeService(
