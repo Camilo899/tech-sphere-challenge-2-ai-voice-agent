@@ -1,4 +1,5 @@
 import base64
+
 from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.application.use_cases.send_voice_message import (

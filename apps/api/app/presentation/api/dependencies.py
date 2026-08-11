@@ -19,7 +19,6 @@ from app.infrastructure.voice.gemini_voice_provider import (
     GeminiVoiceProvider,
 )
 
-
 _repository = FakeConversationRepository()
 
 

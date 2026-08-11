@@ -9,12 +9,6 @@ from app.domain.services.clinical_response_service import (
 )
 from app.domain.value_objects.evidence import Evidence
 
-from app.application.fakes.fake_language_model import FakeLanguageModel
-from app.domain.services.clinical_prompt_builder import ClinicalPromptBuilder
-from app.domain.services.clinical_response_service import (
-    ClinicalResponseService,
-)
-
 
 def test_generate_response_uses_retrieved_evidence() -> None:
     language_model = FakeLanguageModel()

@@ -1,12 +1,13 @@
 from app.infrastructure.rag.bge_embedding_provider import (
-BGEEmbeddingProvider,
+    BGEEmbeddingProvider,
 )
 from app.infrastructure.rag.chroma_knowledge_indexer import (
-ChromaKnowledgeIndexer,
+    ChromaKnowledgeIndexer,
 )
 from app.infrastructure.rag.chroma_knowledge_provider import (
-ChromaKnowledgeProvider,
+    ChromaKnowledgeProvider,
 )
+
 
 def test_bge_embedding_provider_works_with_chroma(tmp_path) -> None:
     embedding_provider = BGEEmbeddingProvider()

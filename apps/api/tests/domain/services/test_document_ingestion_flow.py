@@ -1,7 +1,9 @@
-from app.domain.services.document_extractor import DocumentExtractor
-from app.domain.services.document_chunker import DocumentChunker
-from app.domain.services.clinical_knowledge_ingestion_service import ClinicalKnowledgeIngestionService
 from app.domain.ports.knowledge_indexer import KnowledgeIndexer
+from app.domain.services.clinical_knowledge_ingestion_service import (
+    ClinicalKnowledgeIngestionService,
+)
+from app.domain.services.document_chunker import DocumentChunker
+from app.domain.services.document_extractor import DocumentExtractor
 
 
 class FakeKnowledgeIndexer(KnowledgeIndexer):

@@ -1,3 +1,7 @@
+from app.application.dtos.start_follow_up_request import StartFollowUpRequest
+from app.application.factories.conversation_orchestrator_factory import (
+    create_conversation_orchestrator,
+)
 from app.application.fakes.fake_conversation_repository import (
     FakeConversationRepository,
 )
@@ -5,19 +9,14 @@ from app.application.fakes.fake_knowledge_provider import (
     FakeKnowledgeProvider,
 )
 from app.application.fakes.fake_language_model import FakeLanguageModel
-
-from app.application.fakes.fake_voice_provider import FakeVoiceProvider
 from app.application.fakes.fake_text_to_speech_provider import (
     FakeTextToSpeechProvider,
 )
-from app.application.factories.conversation_orchestrator_factory import (
-    create_conversation_orchestrator,
-)
+from app.application.fakes.fake_voice_provider import FakeVoiceProvider
 from app.application.use_cases.send_voice_message import (
     SendVoiceMessageUseCase,
 )
 from app.application.use_cases.start_follow_up import StartFollowUpUseCase
-from app.application.dtos.start_follow_up_request import StartFollowUpRequest
 
 
 def test_send_voice_message_processes_transcribed_message() -> None:
