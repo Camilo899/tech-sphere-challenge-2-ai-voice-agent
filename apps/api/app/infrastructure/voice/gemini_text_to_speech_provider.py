@@ -52,4 +52,21 @@ class GeminiTextToSpeechProvider(TextToSpeechProvider):
             ),
         )
 
-        return response.candidates[0].content.parts[0].inline_data.data
+        # Comprobaciones explícitas para evitar None
+        if not response or not response.candidates:
+            return b""
+
+        candidate = response.candidates[0]
+        if not candidate or not candidate.content or not candidate.content.parts:
+            return b""
+
+        part = candidate.content.parts[0]
+        inline_data = getattr(part, "inline_data", None)
+        if inline_data is None:
+            return b""
+
+        data: bytes | None = getattr(inline_data, "data", None)
+        if data is None:
+            return b""
+
+        return data
