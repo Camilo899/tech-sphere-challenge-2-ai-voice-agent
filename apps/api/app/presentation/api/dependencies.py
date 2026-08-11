@@ -12,6 +12,9 @@ from app.application.use_cases.start_follow_up import StartFollowUpUseCase
 from app.infrastructure.llm.gemini_language_model import (
     GeminiLanguageModel,
 )
+from app.infrastructure.voice.gemini_text_to_speech_provider import (
+    GeminiTextToSpeechProvider,
+)
 from app.infrastructure.voice.gemini_voice_provider import (
     GeminiVoiceProvider,
 )
@@ -48,7 +51,7 @@ def get_send_message_use_case() -> SendMessageUseCase:
 def get_send_voice_message_use_case() -> SendVoiceMessageUseCase:
     """
     Creates the SendVoiceMessageUseCase with the configured
-    production voice provider and LLM.
+    production voice providers and LLM.
     """
     language_model = GeminiLanguageModel()
 
@@ -57,9 +60,11 @@ def get_send_voice_message_use_case() -> SendVoiceMessageUseCase:
     )
 
     voice_provider = GeminiVoiceProvider()
+    text_to_speech_provider = GeminiTextToSpeechProvider()
 
     return SendVoiceMessageUseCase(
         repository=_repository,
         orchestrator=orchestrator,
         voice_provider=voice_provider,
+        text_to_speech_provider=text_to_speech_provider,
     )

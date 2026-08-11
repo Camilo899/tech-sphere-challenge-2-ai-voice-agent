@@ -7,6 +7,9 @@ from app.application.fakes.fake_knowledge_provider import (
 from app.application.fakes.fake_language_model import FakeLanguageModel
 
 from app.application.fakes.fake_voice_provider import FakeVoiceProvider
+from app.application.fakes.fake_text_to_speech_provider import (
+    FakeTextToSpeechProvider,
+)
 from app.application.factories.conversation_orchestrator_factory import (
     create_conversation_orchestrator,
 )
@@ -20,6 +23,7 @@ from app.application.dtos.start_follow_up_request import StartFollowUpRequest
 def test_send_voice_message_processes_transcribed_message() -> None:
     repository = FakeConversationRepository()
     voice_provider = FakeVoiceProvider()
+    text_to_speech_provider = FakeTextToSpeechProvider()
     language_model = FakeLanguageModel()
     knowledge_provider = FakeKnowledgeProvider()
 
@@ -40,6 +44,7 @@ def test_send_voice_message_processes_transcribed_message() -> None:
         repository=repository,
         orchestrator=orchestrator,
         voice_provider=voice_provider,
+        text_to_speech_provider=text_to_speech_provider,
     )
 
     result = use_case.execute(
@@ -50,6 +55,9 @@ def test_send_voice_message_processes_transcribed_message() -> None:
 
     assert result.response == "Respuesta clínica simulada."
     assert result.current_state == "patient_verification"
+    assert result.audio is not None
+    assert result.audio.startswith(b"fake-audio:")
+    assert text_to_speech_provider.last_text == result.response
 
     assert voice_provider.last_audio == b"fake-audio"
     assert voice_provider.last_mime_type == "audio/wav"

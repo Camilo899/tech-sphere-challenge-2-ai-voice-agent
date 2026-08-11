@@ -8,3 +8,4 @@ class SendVoiceMessageResponseSchema(BaseModel):
 
     response: str
     current_state: str
+    audio: str | None = None

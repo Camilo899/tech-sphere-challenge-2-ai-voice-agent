@@ -1,3 +1,4 @@
+import base64
 from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.application.use_cases.send_voice_message import (
@@ -38,4 +39,9 @@ async def send_voice_message(
     return SendVoiceMessageResponseSchema(
         response=result.response,
         current_state=result.current_state,
-    )
+        audio=(
+            base64.b64encode(result.audio).decode("ascii")
+            if result.audio is not None
+            else None
+        ),
+)
